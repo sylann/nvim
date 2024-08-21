@@ -48,10 +48,30 @@ local function get_mode_data()
     return modes.UNKNOWN -- Should not arrive here: fix it if it happens
 end
 
+GitAheadBehind = { ahead = 0, behind = 0 }
+
+function UpdateAheadbehind()
+    local cmd = { "git", "rev-list", "--left-right", "--count", "HEAD...@{upstream}" }
+    local res = vim.system(cmd, { text = true, timeout = 1000 }):wait()
+    local a, b
+    if res.stdout then
+        a, b = res.stdout:match("(%d+)%s(%d+)")
+    end
+    GitAheadBehind.ahead = a and tonumber(a) or 0
+    GitAheadBehind.behind = b and tonumber(b) or 0
+end
+
+vim.api.nvim_create_autocmd({ "VimEnter", "DirChanged" }, { callback = UpdateAheadbehind })
+
 local function sl_branch()
     local head = vim.b.gitsigns_head
     if not head or head == "" then return "" end
-    return "  " .. head .. " "
+    local a, b = GitAheadBehind.ahead, GitAheadBehind.behind
+    local ab = ""
+    if a > 0 then ab = ab .. " ↑" .. a end
+    if b > 0 then ab = ab .. " ↓" .. b end
+    if #head > 25 then head = head:sub(1, 22) .. "…" end
+    return "  " .. head .. ab .. " "
 end
 
 local function sl_gitsigns()
