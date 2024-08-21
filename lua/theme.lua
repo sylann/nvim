@@ -101,32 +101,40 @@ M.colors.syn = {
     mark_tag_bad = "#A09030",
 }
 
-function M.setup()
+---@alias HlHandler fun(name: string, fg: string, bg: string, ...: string)
+---@alias LinkHandler fun(name: string, target_name: string)
+
+---@type HlHandler
+local hl_handler = function(name, fg, bg, ...)
+    local opts = { fg = fg, bg = bg }
+    for _, flag in ipairs({ ... }) do
+        opts[flag] = true
+    end
+    vim.api.nvim_set_hl(0, name, opts)
+end
+
+---@type LinkHandler
+local link_handler = function(link_name, source_name)
+    local opts = { link = source_name }
+    vim.api.nvim_set_hl(0, link_name, opts)
+end
+
+---Setup highlight groups for this theme
+---@param hl_delegate HlHandler?
+---@param link_delegate LinkHandler?
+function M.setup(hl_delegate, link_delegate)
     vim.o.background = M.background
     vim.o.termguicolors = true
     vim.g.colors_name = M.name
 
-    local _ = nil
+    local _ = "NONE"
     local U = "underline"
     local B = "bold"
     local I = "italic"
     local S = "strikethrough"
 
-    local hl = function(name, fg, bg, ...)
-        local opts = { fg = fg, bg = bg }
-        for _, flag in ipairs({ ... }) do
-            opts[flag] = true
-        end
-        vim.api.nvim_set_hl(0, name, opts)
-    end
-
-    local link = function(link_name, source_name)
-        local opts = { link = source_name }
-        vim.api.nvim_set_hl(0, link_name, opts)
-    end
-
-    -- https://github.com/nvim-treesitter/nvim-treesitter/blob/master/CONTRIBUTING.md#highlights
-    -- https://github.com/nvim-treesitter/nvim-treesitter/blob/master/queries/lua/highlights.scm
+    local hl = hl_delegate or hl_handler
+    local link = link_delegate or link_handler
 
     local ui = M.colors.ui
     local syn = M.colors.syn
@@ -385,6 +393,49 @@ function M.setup()
     hl("@lsp.type.typeAlias", syn.type_2, _, I)
     hl("@lsp.type.lifetime", syn.special, _, I)
     hl("@character.special", syn.special, _)
+end
+
+local colorscheme_header = [[hi clear
+if exists("syntax_on")
+  syntax reset
+endif
+let g:colors_name = "%s"
+
+set background=%s
+
+]]
+
+---Generate a vim colorscheme file from the setup theme definitions
+---@param filepath string?
+function M.generate_colorscheme(filepath)
+    filepath = filepath or vim.fn.expand("~") .. "/.vim/colors/" .. M.name .. ".vim"
+
+    local f, err = io.open(filepath, "w")
+    if not f or err then
+        print("Error:", err or "Could not get file handle")
+        return
+    end
+
+    ---@type HlHandler
+    local gen_hi = function(name, fg, bg, ...)
+        if name:sub(1, 1) == "@" then return end -- not valid in vim
+        local fmt = "hi %s guifg=%s guibg=%s gui=%s cterm=%s\n"
+        local flags = { ... }
+        local attrs = #flags > 0 and table.concat(flags, ",") or "NONE"
+        f:write(fmt:format(name, fg, bg, attrs, attrs))
+    end
+
+    ---@type LinkHandler
+    local function gen_link(name, target_name)
+        if name:sub(1, 1) == "@" then return end -- not valid in vim
+        local fmt = "hi link %s %s\n"
+        f:write(fmt:format(name, target_name))
+    end
+
+    f:write(colorscheme_header:format(M.name, M.background))
+    M.setup(gen_hi, gen_link)
+    f:flush()
+    f:close()
 end
 
 return M
