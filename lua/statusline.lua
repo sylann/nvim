@@ -50,7 +50,7 @@ end
 
 GitAheadBehind = { ahead = 0, behind = 0 }
 
-function UpdateAheadbehind()
+function UpdateAheadBehind()
     local cmd = { "git", "rev-list", "--left-right", "--count", "HEAD...@{upstream}" }
     local res = vim.system(cmd, { text = true, timeout = 1000 }):wait()
     local a, b
@@ -61,7 +61,11 @@ function UpdateAheadbehind()
     GitAheadBehind.behind = b and tonumber(b) or 0
 end
 
-vim.api.nvim_create_autocmd({ "VimEnter", "DirChanged" }, { callback = UpdateAheadbehind })
+vim.api.nvim_create_autocmd({ "VimEnter", "DirChanged" }, { callback = UpdateAheadBehind })
+vim.api.nvim_create_autocmd({ "User" }, {
+    pattern = { "FugitiveChanged" },
+    callback = UpdateAheadBehind,
+})
 
 local function sl_branch()
     local head = vim.b.gitsigns_head
