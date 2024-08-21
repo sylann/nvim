@@ -1,4 +1,4 @@
-local _, devicons = pcall(require, "nvim-web-devicons")
+local icons = require("icons")
 
 -- stylua: ignore
 local modes = {
@@ -105,15 +105,14 @@ local function sl_diagnostics()
     return s:sub(2) .. "%#Statusline# ▏"
 end
 
--- NOTE: The intent is to indicate which filetype is detected. The filename is irrelevant.
-local function sl_filetype()
+local function sl_filetype(bg)
     local ft = vim.bo.filetype
-    if not devicons then return ft .. " " end
+    local ic = icons.get_icon_by_filetype(ft)
+    if not ic then return ft .. " " end
 
-    local icon, hl = devicons.get_icon_by_filetype(ft)
-    if not icon then return ft .. " " end
-
-    return "%#" .. hl .. "#" .. icon .. "%#Sl# " .. ft .. " "
+    local hl = "StlIcon"
+    vim.api.nvim_set_hl(0, hl, { fg = ic.color, bg = bg })
+    return "%#" .. hl .. "#" .. ic.icon .. "%#Sl# " .. ic.name .. " "
 end
 
 local function sl_encoding()
