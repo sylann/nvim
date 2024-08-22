@@ -43,12 +43,16 @@ return {
                 { name = "path" },
             },
         }
+        
+        local mapExpr = Mapper({ expr = true })
 
-        vim.keymap.set({ "i", "s" }, "<Tab>", function()
-            if vim.snippet.active({ direction = 1 }) then
-                return "<cmd>lua vim.snippet.jump(1)<cr>"
-            end
-            return "<Tab>"
-        end, { expr = true })
+        mapExpr({ "i", "s" }, "<S-Tab>", "<S-Tab> navigates snippet positions in reverse if one is active", function()
+            if not vim.snippet.active({ direction = -1 }) then return "<S-Tab>" end
+            return "<cmd>lua vim.snippet.jump(-1)<cr>"
+        end)
+        mapExpr({ "i", "s" }, "<Tab>", "<Tab> navigates snippet positions if one is active", function()
+            if not vim.snippet.active({ direction = 1 }) then return "<Tab>" end
+            return "<cmd>lua vim.snippet.jump(1)<cr>"
+        end)
     end,
 }
