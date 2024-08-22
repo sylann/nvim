@@ -4,6 +4,7 @@ return {
 
     config = function()
         local gitsigns = require("gitsigns")
+        local actions = require("gitsigns.actions")
         gitsigns.setup {
             signs_staged_enable = true,
             signcolumn          = true,
@@ -30,40 +31,25 @@ return {
             },
 
             on_attach           = function(buffer)
-                local map = Mapper { buffer = buffer }
-                local mapExpr = Mapper { buffer = buffer, expr = true }
+                local map = Mapper({ buffer = buffer })
 
-                map("n", "<C-s>s", "Stage hunk under cursor", gitsigns.stage_hunk)
-                map("n", "<C-s>r", "Reset hunk under cursor", gitsigns.reset_hunk)
-                map("x", "<C-s>s", "Stage hunk(s) in current selection", function()
-                    gitsigns.stage_hunk { vim.fn.line('.'), vim.fn.line('v') }
-                end)
-                map("x", "<C-s>s", "Reset hunk(s) in current selection", function()
-                    gitsigns.reset_hunk { vim.fn.line('.'), vim.fn.line('v') }
-                end)
-                map("x", "<C-s>u", "Reset hunk under cursor", gitsigns.reset_hunk)
-                map("n", "<C-s>S", "Stage whole buffer", gitsigns.stage_buffer)
-                map("n", "<C-s>U", "Reset whole buffer", gitsigns.reset_buffer)
+                map("n", "<C-s>S", "Stage whole buffer", actions.stage_buffer)
+                map("n", "<C-s>s", "Stage hunk under cursor", actions.stage_hunk)
+                map("x", "<C-s>s", "Stage hunk(s) in current selection", function() actions.stage_hunk({ vim.fn.line("."), vim.fn.line("v") }) end)
+                map("n", "<C-s>U", "Unstage whole buffer", actions.reset_buffer)
+                map("n", "<C-s>u", "Unstage hunk under cursor", actions.reset_hunk)
+                map("x", "<C-s>u", "Unstage hunk(s) in current selection", function() actions.reset_hunk({ vim.fn.line("."), vim.fn.line("v") }) end)
 
-                map("n", "<C-s>v", "Preview hunk under cursor", gitsigns.preview_hunk)
-                map("n", "<C-s>b", "Show diff of last commit on current line", function()
-                    gitsigns.blame_line { full = true }
-                end)
+                map("n", "<C-s>r", "Revert last stage hunk", actions.undo_stage_hunk)
 
-                map("n", "<C-s>d", "Diff current file index", gitsigns.diffthis)
-                map("n", "<C-s>D", "Diff current file with head", function() gitsigns.diffthis('~') end)
+                map("n", "<C-s>v", "Preview hunk under cursor", actions.preview_hunk)
+                map("n", "<C-s>b", "Show diff of last commit on current line", function() actions.blame_line({ full = true }) end)
 
-                mapExpr({ "n", "x" }, "<C-s>k", "Jump to previous hunk", function()
-                    if vim.wo.diff then return "[c" end
-                    vim.schedule(gitsigns.prev_hunk)
-                    return "<Ignore>"
-                end)
+                map("n", "<C-s>d", "Diff current file index", actions.diffthis)
+                map("n", "<C-s>D", "Diff current file with head", function() actions.diffthis("~") end)
 
-                mapExpr({ "n", "x" }, "<C-s>j", "Jump to next hunk", function()
-                    if vim.wo.diff then return "]c" end
-                    vim.schedule(gitsigns.next_hunk)
-                    return "<Ignore>"
-                end)
+                map("n", "<C-s>k", "Jump to previous hunk", function() actions.nav_hunk("prev") end)
+                map("n", "<C-s>j", "Jump to next hunk", function() actions.nav_hunk("next") end)
             end
         }
     end,
