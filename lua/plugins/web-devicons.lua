@@ -3,7 +3,7 @@ return {
 
     enabled = vim.g.have_nerd_font,
 
-    config = function ()
+    config = function()
         local devicons = require("nvim-web-devicons")
         local by_ext = devicons.get_icons_by_extension()
 
@@ -13,5 +13,5 @@ return {
                 [".flake8"] = by_ext.ini,
             },
         })
-    end
+    end,
 }

@@ -18,19 +18,19 @@ local function dist_squared(R, G, B, r, g, b)
 end
 
 -- Convert an RGB triplet to the xterm(1) 256 color palette.
--- 
+--
 -- xterm provides a 6x6x6 color cube (16 - 231) and 24 greys (232 - 255). We
 -- map our RGB color to the closest in the cube, also work out the closest
 -- grey, and use the nearest of the two.
--- 
+--
 -- Note that the xterm has much lower resolution for darker colours (they are
 -- not evenly spread out), so our 6 levels are not evenly spread: 0x0, 0x5f
 -- (95), 0x87 (135), 0xaf (175), 0xd7 (215) and 0xff (255). Greys are more
 -- evenly spread (8, 18, 28 ... 238).
--- 
+--
 -- Based on the original implementation by Avi Halachami, see:
 -- https://github.com/tmux/tmux/commit/d9450bfccd3dc0c55c412a1871a70d3e94dd7be6
--- 
+--
 ---@param r integer
 ---@param g integer
 ---@param b integer

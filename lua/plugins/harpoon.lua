@@ -15,7 +15,7 @@ return {
 
         vim.keymap.set("n", "<leader>&", function() harpoon:list():select(1) end)
         vim.keymap.set("n", "<leader>|", function() harpoon:list():select(2) end)
-        vim.keymap.set("n", "<leader>\"", function() harpoon:list():select(3) end)
+        vim.keymap.set("n", '<leader>"', function() harpoon:list():select(3) end)
         vim.keymap.set("n", "<leader>'", function() harpoon:list():select(4) end)
         vim.keymap.set("n", "<leader>(", function() harpoon:list():select(5) end)
         vim.keymap.set("n", "<leader>)", function() harpoon:list():select(6) end)

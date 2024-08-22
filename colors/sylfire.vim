@@ -1,3 +1,3 @@
 lua << EOF
-require "theme".setup()
+require("theme").setup()
 EOF

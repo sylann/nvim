@@ -3,10 +3,10 @@ return {
     "terrortylor/nvim-comment",
 
     config = function()
-        local plugin = require "nvim_comment"
+        local plugin = require("nvim_comment")
 
         plugin.setup({
-            create_mappings = false
+            create_mappings = false,
         })
 
         vim.keymap.set("n", "ç", [[:CommentToggle<CR>]], { desc = "Toggle comment on current line" })
