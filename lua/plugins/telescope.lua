@@ -109,7 +109,11 @@ return {
         end)
         map("x", "<leader>fv", "Find visual selection in current workspace", function()
             vim.cmd.normal([["vy]])
-            builtin.live_grep({ default_text = vim.fn.getreg("v") })
+            local selection = vim.fn.getreg("v")
+            -- 1. escape special symbols that will be interpreted as regex patterns (not what I want)
+            -- 2. live_grep uses `nvim_buf_set_lines` internally and it crashes when the prompt contains a raw newline.
+            local sanitized = vim.fn.escape(selection, "/{}[]^$+*."):gsub("\n", "\\n")
+            builtin.live_grep({ default_text = sanitized })
         end)
         map(
             "n",
