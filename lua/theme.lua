@@ -408,6 +408,7 @@ set background=%s
 ---Generate a vim colorscheme file from the setup theme definitions
 ---@param filepath string?
 function M.generate_colorscheme(filepath)
+    local color = require("color")
     filepath = filepath or vim.fn.expand("~") .. "/.vim/colors/" .. M.name .. ".vim"
 
     local f, err = io.open(filepath, "w")
@@ -419,10 +420,12 @@ function M.generate_colorscheme(filepath)
     ---@type HlHandler
     local gen_hi = function(name, fg, bg, ...)
         if name:sub(1, 1) == "@" then return end -- not valid in vim
-        local fmt = "hi %s guifg=%s guibg=%s gui=%s cterm=%s\n"
+        local fmt = "hi %s guifg=%s guibg=%s gui=%s ctermfg=%s ctermbg=%s cterm=%s\n"
         local flags = { ... }
         local attrs = #flags > 0 and table.concat(flags, ",") or "NONE"
-        f:write(fmt:format(name, fg, bg, attrs, attrs))
+        local tfg = color.hex_to_xterm(fg) or "NONE"
+        local tbg = color.hex_to_xterm(bg) or "NONE"
+        f:write(fmt:format(name, fg, bg, attrs, tfg, tbg, attrs))
     end
 
     ---@type LinkHandler
