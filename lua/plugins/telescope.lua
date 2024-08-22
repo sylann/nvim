@@ -54,9 +54,10 @@ return {
                         "!**/target/*",
                         "!**/node_modules/*",
                     },
-                    additional_args = function(opts) return { "--hidden" } end,
+                    additional_args = function(opts) return { "--hidden", "--multiline" } end,
                 },
                 find_files = {
+                    --stylua: ignore
                     find_command = {
                         "rg",
                         "--files",
