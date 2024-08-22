@@ -27,7 +27,7 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
             vim.api.nvim_win_set_cursor(0, { line, 0 })
         end
         vim.keymap.set("n", "d", del_qf_item, { silent = true, buffer = 0 })
-        vim.keymap.set("v", "d", del_qf_item, { silent = true, buffer = 0 })
+        vim.keymap.set("x", "d", del_qf_item, { silent = true, buffer = 0 })
         vim.keymap.set("n", "	", "<Enter>:copen<CR>", { silent = true })
     end,
     group = sylann_augroup,

@@ -38,7 +38,7 @@ return {
                 map("n", "gj", "[LSP] Go to next diagnostic", vim.diagnostic.goto_next)
                 -- map("n", "gf", "[LSP] Autoformat current buffer", vim.lsp.buf.format) -- let conform handle formatting
                 map("n", "gn", "[LSP] Rename symbol", vim.lsp.buf.rename)
-                map({ "n", "v" }, "ga", "[LSP] Show code actions", vim.lsp.buf.code_action)
+                map({ "n", "x"}, "ga", "[LSP] Show code actions", vim.lsp.buf.code_action)
                 map("i", "<C-g>", "[LSP] Show code actions", vim.lsp.buf.code_action)
 
                 local client = vim.lsp.get_client_by_id(event.data.client_id)

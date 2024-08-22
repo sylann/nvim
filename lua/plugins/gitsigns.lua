@@ -35,13 +35,13 @@ return {
 
                 map("n", "<C-s>s", "Stage hunk under cursor", gitsigns.stage_hunk)
                 map("n", "<C-s>r", "Reset hunk under cursor", gitsigns.reset_hunk)
-                map("v", "<C-s>s", "Stage hunk(s) in current selection", function()
+                map("x", "<C-s>s", "Stage hunk(s) in current selection", function()
                     gitsigns.stage_hunk { vim.fn.line('.'), vim.fn.line('v') }
                 end)
-                map("v", "<C-s>s", "Reset hunk(s) in current selection", function()
+                map("x", "<C-s>s", "Reset hunk(s) in current selection", function()
                     gitsigns.reset_hunk { vim.fn.line('.'), vim.fn.line('v') }
                 end)
-                map("v", "<C-s>u", "Reset hunk under cursor", gitsigns.reset_hunk)
+                map("x", "<C-s>u", "Reset hunk under cursor", gitsigns.reset_hunk)
                 map("n", "<C-s>S", "Stage whole buffer", gitsigns.stage_buffer)
                 map("n", "<C-s>U", "Reset whole buffer", gitsigns.reset_buffer)
 
@@ -53,13 +53,13 @@ return {
                 map("n", "<C-s>d", "Diff current file index", gitsigns.diffthis)
                 map("n", "<C-s>D", "Diff current file with head", function() gitsigns.diffthis('~') end)
 
-                mapExpr({ "n", "v" }, "<C-s>k", "Jump to previous hunk", function()
+                mapExpr({ "n", "x" }, "<C-s>k", "Jump to previous hunk", function()
                     if vim.wo.diff then return "[c" end
                     vim.schedule(gitsigns.prev_hunk)
                     return "<Ignore>"
                 end)
 
-                mapExpr({ "n", "v" }, "<C-s>j", "Jump to next hunk", function()
+                mapExpr({ "n", "x" }, "<C-s>j", "Jump to next hunk", function()
                     if vim.wo.diff then return "]c" end
                     vim.schedule(gitsigns.next_hunk)
                     return "<Ignore>"
