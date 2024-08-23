@@ -197,7 +197,7 @@ function M.setup(hl_delegate, link_delegate)
     hl("WildMenu", ui.gray_050, _)
 
     -- StatusLine (with extensions)
-    hl("Statusline", ui.gray_050, _)
+    hl("Statusline", ui.gray_400, _)
     hl("StatusLineNC", ui.gray_500, _)
     hl("SlAlt", ui.gray_050, ui.gray_700)
     hl("SlNormal", ui.black, ui.blue_note)

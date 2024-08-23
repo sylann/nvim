@@ -4,6 +4,18 @@
 --   Neovim lua version: 5.1 (latest supported by LuaJit)
 table.unpack = table.unpack or unpack
 
+---Create a copy of the given `source` table.
+---@generic T : table<string, any>
+---@param source T
+---@return T
+table.copy = function(source)
+    local out = {}
+    for k, v in pairs(source) do
+          out[k] = v
+    end
+    return out
+end
+
 --- Create a map function with pre-baked options.
 --- It takes a table of base options appropriate for use by `vim.keymap.set`
 --- and returns a new function that can be used like `vim.keymap.set` except
