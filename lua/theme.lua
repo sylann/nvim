@@ -5,8 +5,6 @@ M.background = "dark"
 M.colors = {}
 
 M.colors.ui = {
-    black = "#000000",
-    white = "#FFFFFF",
     gray_950 = "#0B0B0B",
     gray_900 = "#191919",
     gray_800 = "#1B1F27",
@@ -27,26 +25,12 @@ M.colors.ui = {
     blue_note = "#77A0EE",
     brown = "#613214",
     copper = "#C18A56",
-    orange_soft = "#E79E61",
-    orange_intense = "#FF7733",
-    yellow_canari = "#FFCB6B",
     yellow_light = "#D5B06B",
     yellow_mid = "#D8B43C",
-    yellow_alt = "#EFBA42",
-    yellow_sunset = "#E8AB53",
-    yellow_gold = "#F3B735",
     green_dark = "#118811",
     green_mid = "#88B369",
-    green_lime = "#69D847",
     green_pure = "#00FF00",
-    coffee = "#C0FFEE",
     cyan_dark = "#46A6B2",
-    violet = "#B180D7",
-    magenta = "#B668CD",
-    pink_dark = "#D16D9E",
-    pink_intense = "#CC1166",
-    red_400 = "#f07178",
-    red_500 = "#F05060",
 }
 
 M.colors.util = {
@@ -178,10 +162,12 @@ function M.setup(hl_delegate, link_delegate)
     hl("Search", ui.gray_100, ui.blue_800)
     hl("SignColumn", _, _)
     hl("SpecialKey", ui.blue_folder, _, B)
-    hl("SpellBad", ui.red_500, _, U)
+    hl("SpellBad", util.error, _, U)
     hl("SpellCap", ui.yellow_light, _, U)
     hl("SpellLocal", ui.green_mid, _, U)
-    hl("SpellRare", ui.magenta, _, U)
+    hl("SpellRare", util.debug, _, U)
+    hl("Statusline", ui.gray_400, _)
+    hl("StatusLineNC", ui.gray_500, _)
     hl("Substitute", ui.gray_100, ui.brown)
     hl("TabLine", ui.gray_100, ui.gray_700)
     hl("TabLineFill", ui.gray_700, ui.gray_700)
@@ -195,24 +181,6 @@ function M.setup(hl_delegate, link_delegate)
     hl("VisualNOS", _, ui.gray_800)
     hl("WarningMsg", util.error, _)
     hl("WildMenu", ui.gray_050, _)
-
-    -- StatusLine (with extensions)
-    hl("Statusline", ui.gray_400, _)
-    hl("StatusLineNC", ui.gray_500, _)
-    hl("SlAlt", ui.gray_050, ui.gray_700)
-    hl("SlNormal", ui.black, ui.blue_note)
-    hl("SlProtected", ui.black, ui.white)
-    hl("SlModified", ui.black, ui.orange_intense)
-    hl("SlModifiedText", ui.orange_intense, ui.black)
-    hl("SlReadonly", ui.black, ui.gray_300)
-    hl("SlProblem", ui.white, ui.pink_intense)
-    hl("SlProblemText", ui.pink_intense, _)
-    hl("SlVisual", ui.black, ui.violet)
-    hl("SlSelect", ui.black, ui.magenta)
-    hl("SlInsert", ui.black, ui.yellow_light)
-    hl("SlReplace", ui.black, ui.pink_dark)
-    hl("SlCommand", ui.black, ui.green_lime)
-    hl("SlTerminal", ui.black, ui.green_lime)
 
     -- Diagnostics
     hl("DiagnosticError", util.error, _)
@@ -302,7 +270,7 @@ function M.setup(hl_delegate, link_delegate)
     hl("Define", syn.macro, _)
     hl("Macro", syn.macro, _)
     hl("PreCondit", syn.macro, _)
-    hl("Statement", ui.magenta, _)
+    hl("Statement", util.debug, _)
     hl("Special", syn.special, _)
     hl("Tag", syn.mark_tag, _)
     hl("Delimiter", syn.punctuation, _)

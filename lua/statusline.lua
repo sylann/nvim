@@ -1,5 +1,23 @@
 local _, devicons = pcall(require, "nvim-web-devicons")
 
+-- stylua: ignore start
+vim.api.nvim_set_hl(0, "Statusline",     { fg = "#585F74", bg = nil       })
+vim.api.nvim_set_hl(0, "SlAlt",          { fg = "#D4D4D4", bg = "#282f34" })
+vim.api.nvim_set_hl(0, "SlNormal",       { fg = "#000000", bg = "#46A6C2" })
+vim.api.nvim_set_hl(0, "SlProtected",    { fg = "#000000", bg = "#FFFFFF" })
+vim.api.nvim_set_hl(0, "SlModified",     { fg = "#000000", bg = "#DD6633" })
+vim.api.nvim_set_hl(0, "SlModifiedText", { fg = "#FF6633", bg = nil       })
+vim.api.nvim_set_hl(0, "SlReadonly",     { fg = "#000000", bg = "#8B92A8" })
+vim.api.nvim_set_hl(0, "SlProblem",      { fg = "#FFFFFF", bg = "#CC1166" })
+vim.api.nvim_set_hl(0, "SlProblemText",  { fg = "#CC1166", bg = nil       })
+vim.api.nvim_set_hl(0, "SlVisual",       { fg = "#000000", bg = "#B180D7" })
+vim.api.nvim_set_hl(0, "SlSelect",       { fg = "#000000", bg = "#B668CD" })
+vim.api.nvim_set_hl(0, "SlInsert",       { fg = "#000000", bg = "#D5B06B" })
+vim.api.nvim_set_hl(0, "SlReplace",      { fg = "#000000", bg = "#D5786B" })
+vim.api.nvim_set_hl(0, "SlCommand",      { fg = "#000000", bg = "#49C837" })
+vim.api.nvim_set_hl(0, "SlTerminal",     { fg = "#000000", bg = "#49C837" })
+-- stylua: ignore end
+
 -- stylua: ignore
 local modes = {
     NORMAL      = { hl = "SlNormal",    name = "NORMAL"                                    },
