@@ -69,8 +69,11 @@ end
 GitAheadBehind = { ahead = 0, behind = 0 }
 
 function UpdateAheadBehind()
-    local cmd = { "git", "rev-list", "--left-right", "--count", "HEAD...@{upstream}" }
-    local res = vim.system(cmd, { text = true, timeout = 1000 }):wait()
+    local cmd = vim.split("git rev-list --left-right --count HEAD...@{upstream}", " ")
+    local cwd = vim.fn.expand("%:h")
+    if cwd == "" or cwd:match("%w+://") then return end -- skip buffers that are not real files
+
+    local res = vim.system(cmd, { text = true, timeout = 1000, cwd = cwd }):wait()
     local a, b
     if res.stdout then
         a, b = res.stdout:match("(%d+)%s(%d+)")
@@ -79,7 +82,7 @@ function UpdateAheadBehind()
     GitAheadBehind.behind = b and tonumber(b) or 0
 end
 
-vim.api.nvim_create_autocmd({ "VimEnter", "DirChanged" }, { callback = UpdateAheadBehind })
+vim.api.nvim_create_autocmd({ "VimEnter", "BufEnter" }, { callback = UpdateAheadBehind })
 vim.api.nvim_create_autocmd({ "User" }, {
     pattern = { "FugitiveChanged" },
     callback = UpdateAheadBehind,
