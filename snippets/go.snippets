@@ -1,0 +1,126 @@
+snippet make
+	make(${1:[]string}, ${0:0})
+
+snippet map
+	map[${1:string}]${0:int}
+
+snippet if
+	if ${1:condition} {
+		${0:// do}
+	}
+
+snippet ifelse
+	if ${1:condition} {
+		${2:// do}
+	} else {
+		${0:// do}
+	}
+
+snippet iferr
+	if ${1:err} != nil {
+		return ${1}
+	}
+	$0
+
+snippet iferrfmt
+	if ${1:err} != nil {
+		return fmt.Errorf("${2}: %w", $1)
+	}
+	$0
+
+snippet forn
+	for i := 0; i < ${1:n}; i++ {
+		${0: // do}
+	}
+
+snippet forsize
+	for i, size := 0, len(${1:slice}); i < size; i++ {
+		${0: // do}
+	}
+
+snippet forof
+	for ${1:i}, ${2:v} := range ${3:slice} {
+		${0:// do}
+	}
+
+snippet forin
+	for ${1:k}, ${2:v} := range ${3:mapping} {
+		${0:// do}
+	}
+
+snippet switch
+	switch ${1:variable} {
+	case ${2:value}:
+		${3:// do}
+	default:
+		${0:// do}
+	}
+
+snippet select
+	select {
+	case ${1:value} := <-${2:channel}
+		${3:// do}
+	default:
+		${0:// do}
+	}
+
+snippet struct
+	type ${1:name} struct {
+		${0:// field}
+	}
+
+snippet interface
+	type ${1:name} interface {
+		${0:// method()}
+	}
+
+snippet func
+	func ${1:name}(${2:arg}) ${3:ret} {
+		${0:// body}
+	}
+
+snippet funcreceiver
+	func (${1:receiver}) ${2:name}(${3:arg}) ${4:ret} {
+		${0:// body}
+	}
+
+snippet funcrequest
+	func (${1:receiver}) ${2:name}(w http.ResponseWriter, r *http.Request) {
+		${0:// body}
+	}
+
+snippet printf
+	fmt.Printf("%${1:v}\n", ${2:variable})$0
+
+snippet printl
+	fmt.Println(${1:variable})$0
+
+snippet printfs
+	fmt.Sprintf("%${1:v}\n", ${2:variable})$0
+
+snippet printls
+	fmt.Sprintln(${1:variable})$0
+
+snippet printff
+	fmt.Fprintf(${1:w}, "%${2:v}\n", ${3:variable})$0
+
+snippet printlf
+	fmt.Fprintln(${1:w}, ${2:variable})$0
+
+snippet log
+	log.Println(${1:variable})$0
+
+snippet logf
+	log.Printf("%${2:s}\n", ${1:variable})$0
+
+snippet test
+	func Test${:Name1}(t *testing.T) {
+		${0:// body}
+	}
+
+snippet bench
+	func Bench${1:Name}(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			${0:// body}
+		}
+	}

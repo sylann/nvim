@@ -14,10 +14,11 @@ return {
     config = function()
         local cmp = require("cmp")
         local icon_by_kind = require("icons").icon_by_symbol_kind
+        local snippy = require("snippy")
 
         cmp.setup({
             snippet = {
-                expand = function(args) require("snippy").expand_snippet(args.body) end,
+                expand = function(args) snippy.expand_snippet(args.body) end,
             },
             formatting = {
                 fields = { "abbr", "kind", "menu" },
@@ -33,9 +34,13 @@ return {
             mapping = cmp.mapping.preset.insert({
                 ["<C-n>"] = cmp.mapping.select_next_item(),
                 ["<C-p>"] = cmp.mapping.select_prev_item(),
+                ["<C-u>"] = cmp.mapping.scroll_docs(-4),
+                ["<C-d>"] = cmp.mapping.scroll_docs(4),
                 ["<Enter>"] = cmp.mapping.confirm({ select = true }),
                 ["<Tab>"] = cmp.mapping.confirm({ select = true }),
                 ["<C-Space>"] = cmp.mapping.complete({}),
+                ["<C-;>"] = cmp.mapping(function(fb) return snippy.can_expand_or_advance() and snippy.expand_or_advance() or fb() end, { "i", "s" }),
+                ["<C-,>"] = cmp.mapping(function(fb) return snippy.can_jump(-1) and snippy.previous() or fb() end, { "i", "s" }),
             }),
 
             sources = {
@@ -44,16 +49,5 @@ return {
                 { name = "snippy" },
             },
         })
-
-        local mapExpr = Mapper({ expr = true })
-
-        mapExpr({ "i", "s" }, "<S-Tab>", "<S-Tab> navigates snippet positions in reverse if one is active", function()
-            if not vim.snippet.active({ direction = -1 }) then return "<S-Tab>" end
-            return "<cmd>lua vim.snippet.jump(-1)<cr>"
-        end)
-        mapExpr({ "i", "s" }, "<Tab>", "<Tab> navigates snippet positions if one is active", function()
-            if not vim.snippet.active({ direction = 1 }) then return "<Tab>" end
-            return "<cmd>lua vim.snippet.jump(1)<cr>"
-        end)
     end,
 }

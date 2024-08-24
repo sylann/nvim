@@ -199,7 +199,8 @@ function M.setup(hl_delegate, link_delegate)
     hl("Removed", util.remove_300, _)
 
     -- Cmp
-    hl("SnippetTabstop", _, _, "underdotted")
+    hl("SnippetTabstop", _, ui.blue_800, I)
+    hl("SnippyPlaceholder", _, ui.blue_900, I)
     hl("CmpItemAbbr", ui.gray_050, _)
     hl("CmpItemAbbrDeprecated", ui.gray_500, _, S)
     hl("CmpItemAbbrMatch", util.info, _, B)
