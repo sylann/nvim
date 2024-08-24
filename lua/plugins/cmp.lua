@@ -41,7 +41,7 @@ return {
                 { name = "path" },
             },
         })
-        
+
         local mapExpr = Mapper({ expr = true })
 
         mapExpr({ "i", "s" }, "<S-Tab>", "<S-Tab> navigates snippet positions in reverse if one is active", function()
@@ -51,10 +51,6 @@ return {
         mapExpr({ "i", "s" }, "<Tab>", "<Tab> navigates snippet positions if one is active", function()
             if not vim.snippet.active({ direction = 1 }) then return "<Tab>" end
             return "<cmd>lua vim.snippet.jump(1)<cr>"
-        end)
-        mapExpr("n", "<Esc>", "<Esc> stops active snippet if any", function()
-            if not vim.snippet.active() then return "<Esc>" end
-            return "<cmd>lua vim.snippet.stop()<cr>"
         end)
     end,
 }
