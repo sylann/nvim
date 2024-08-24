@@ -5,6 +5,8 @@ return {
     dependencies = {
         "hrsh7th/cmp-nvim-lsp",
         "hrsh7th/cmp-path",
+        "dcampos/nvim-snippy",
+        "dcampos/cmp-snippy",
     },
 
     event = "InsertEnter",
@@ -15,7 +17,7 @@ return {
 
         cmp.setup({
             snippet = {
-                expand = function(args) vim.snippet.expand(args.body) end,
+                expand = function(args) require("snippy").expand_snippet(args.body) end,
             },
             formatting = {
                 fields = { "abbr", "kind", "menu" },
@@ -39,6 +41,7 @@ return {
             sources = {
                 { name = "nvim_lsp" },
                 { name = "path" },
+                { name = "snippy" },
             },
         })
 
