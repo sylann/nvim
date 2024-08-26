@@ -11,9 +11,30 @@ table.unpack = table.unpack or unpack
 table.copy = function(source)
     local out = {}
     for k, v in pairs(source) do
-          out[k] = v
+        out[k] = v
     end
     return out
+end
+
+---Remove elements from `tabl` if they verify the `must_be_removed` predicate.
+---The table is modified in place.
+---@generic T
+---@param tabl table<integer, T>
+---@param must_be_removed fun(element: T): boolean
+---@return integer n_removed
+table.splice = function(tabl, must_be_removed)
+    local removed = 0
+    for idx = 1, #tabl do
+        if must_be_removed(tabl[idx]) then
+            removed = removed + 1
+        else
+            tabl[idx - removed] = tabl[idx]
+        end
+    end
+    for i = #tabl - removed + 1, #tabl do
+        tabl[i] = nil
+    end
+    return removed
 end
 
 --- Create a map function with pre-baked options.

@@ -103,6 +103,16 @@ return {
                     },
                 },
                 filetypes = { "javascript", "typescript", "vue" },
+                handlers = {
+                    ["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
+                        if result ~= nil then
+                            table.splice(result.diagnostics, function(diag)
+                                return diag.code == 80006 -- "This may be converted to an async function"
+                            end)
+                        end
+                        vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
+                    end,
+                },
             },
             volar = {},
             angularls = {
