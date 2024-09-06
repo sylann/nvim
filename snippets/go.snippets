@@ -20,13 +20,13 @@ snippet iferr
 	if ${1:err} != nil {
 		return ${1}
 	}
-	$0
+	${0}
 
 snippet iferrfmt
 	if ${1:err} != nil {
-		return fmt.Errorf("${2}: %w", $1)
+		return fmt.Errorf("${2}: %w", ${1})
 	}
-	$0
+	${0}
 
 snippet forn
 	for i := 0; i < ${1:n}; i++ {
@@ -90,28 +90,28 @@ snippet funcrequest
 	}
 
 snippet printf
-	fmt.Printf("%${1:v}\n", ${2:variable})$0
+	fmt.Printf("%${1:v}\n", ${2:variable})${0}
 
 snippet printl
-	fmt.Println(${1:variable})$0
+	fmt.Println(${1:variable})${0}
 
 snippet printfs
-	fmt.Sprintf("%${1:v}\n", ${2:variable})$0
+	fmt.Sprintf("%${1:v}\n", ${2:variable})${0}
 
 snippet printls
-	fmt.Sprintln(${1:variable})$0
+	fmt.Sprintln(${1:variable})${0}
 
 snippet printff
-	fmt.Fprintf(${1:w}, "%${2:v}\n", ${3:variable})$0
+	fmt.Fprintf(${1:w}, "%${2:v}\n", ${3:variable})${0}
 
 snippet printlf
-	fmt.Fprintln(${1:w}, ${2:variable})$0
+	fmt.Fprintln(${1:w}, ${2:variable})${0}
 
 snippet log
-	log.Println(${1:variable})$0
+	log.Println(${1:variable})${0}
 
 snippet logf
-	log.Printf("%${2:s}\n", ${1:variable})$0
+	log.Printf("%${2:s}\n", ${1:variable})${0}
 
 snippet test
 	func Test${:Name1}(t *testing.T) {
