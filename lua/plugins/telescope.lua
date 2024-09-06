@@ -104,6 +104,7 @@ return {
         map("n", "<leader>fn", "Find files in My Neovim Config", function() builtin.find_files({ cwd = vim.fn.stdpath("config") }) end)
         map("n", "<leader>fp", "Find files in Neovim installed plugins", function() builtin.find_files({ cwd = vim.fn.stdpath("data") }) end)
         map("n", "<leader>fl", "Find (Live Grep) in current workspace", builtin.live_grep)
+        map("n", "<leader>fo", "Find (Live Grep) in opened buffers", function() builtin.live_grep({ grep_open_files = true }) end)
         map("n", "<leader>fv", "Find word under cursor in current workspace", function()
             vim.cmd.normal([["vyiw]])
             builtin.live_grep({ default_text = vim.fn.getreg("v") })
