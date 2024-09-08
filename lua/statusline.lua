@@ -71,7 +71,7 @@ GitAheadBehind = { ahead = 0, behind = 0 }
 function UpdateAheadBehind()
     local cmd = vim.split("git rev-list --left-right --count HEAD...@{upstream}", " ")
     local cwd = vim.fn.expand("%:h")
-    if cwd == "" or cwd:match("%w+://") then return end -- skip buffers that are not real files
+    if cwd == "" or cwd:match("^%w+:") then return end -- skip buffers that are not real files
 
     local res = vim.system(cmd, { text = true, timeout = 1000, cwd = cwd }):wait()
     local a, b
