@@ -6,6 +6,7 @@ vim.keymap.set("n", "<leader>kk", ":Inspect<CR>", { desc = "Inspect symbol under
 
 vim.keymap.set("n", "<Esc>", ":nohlsearch<CR>", { desc = "Reset hlsearch" })
 vim.keymap.set("s", "<BS>", "><BS>", { desc = "fishy: delete selection and stay in insert mode" })
+vim.keymap.set("n", "<C-P>", [[:set paste | execute 'normal "+p' | set nopaste<CR>]], { desc = "Paste content of system clipboard in paste mode" })
 
 vim.keymap.set("n", "<leader>sr", ":%s/<C-R><C-W>//gc<Left><Left><Left>", { desc = "Start search and replace of word under cursor" })
 vim.keymap.set("x", "<leader>sr", "y:%s/<C-R>0//gc<Left><Left><Left>", { desc = "Start search and replace of current visual selection" })
