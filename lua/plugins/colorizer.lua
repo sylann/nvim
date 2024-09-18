@@ -3,7 +3,7 @@ return {
     "norcalli/nvim-colorizer.lua",
 
     config = function()
-        require("colorizer").setup({ "*" }, { mode = "foreground" })
+        require("colorizer").setup({ "*", "!git", "!fugitive" }, { mode = "foreground" })
 
         vim.keymap.set("n", "<leader>co", vim.cmd.ColorizerToggle)
     end,
