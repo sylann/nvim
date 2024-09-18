@@ -48,7 +48,7 @@ return {
                 map("n", "<C-s>b", "Show diff of last commit on current line", function() actions.blame_line({ full = true }) end)
 
                 map("n", "<C-s>d", "Diff current file index", actions.diffthis)
-                map("n", "<C-s>D", "Diff current file with head", function() actions.diffthis("~") end)
+                map("n", "<C-s>B", "Toggle git blame panel", actions.blame)
 
                 map("n", "<C-s>k", "Jump to previous hunk", function() actions.nav_hunk("prev") end)
                 map("n", "<C-s>j", "Jump to next hunk", function() actions.nav_hunk("next") end)
