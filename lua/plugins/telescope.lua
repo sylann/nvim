@@ -89,6 +89,13 @@ return {
         pcall(telescope.load_extension, "fzf")
         pcall(telescope.load_extension, "ui-select")
         pcall(telescope.load_extension, "git_file_history")
+        local dropdown = themes.get_dropdown({
+            previewer = false,
+            layout_config = {
+                width = 120,
+                height = 30,
+            },
+        })
 
         -- INFO: Keymaps
         local map = Mapper({})
@@ -106,6 +113,7 @@ return {
         map("n", "<leader>fp", "Find files in Neovim installed plugins", function() builtin.find_files({ cwd = vim.fn.stdpath("data") }) end)
         map("n", "<leader>fl", "Find (Live Grep) in current workspace", builtin.live_grep)
         map("n", "<leader>fo", "Find (Live Grep) in opened buffers", function() builtin.live_grep({ grep_open_files = true }) end)
+        map("n", "<leader>/", "Find in current buffer", function() builtin.current_buffer_fuzzy_find(dropdown) end)
         map("n", "<leader>fv", "Find word under cursor in current workspace", function()
             vim.cmd.normal([["vyiw]])
             builtin.live_grep({ default_text = vim.fn.getreg("v") })
@@ -118,17 +126,6 @@ return {
             local sanitized = vim.fn.escape(selection, "/{}[]^$+*."):gsub("\n", "\\n")
             builtin.live_grep({ default_text = sanitized })
         end)
-        map(
-            "n",
-            "<leader>fg",
-            "List Gitmoji options",
-            function()
-                builtin.symbols(themes.get_dropdown({
-                    sources = { "gitmoji" },
-                    previewer = true,
-                    silent = true,
-                }))
-            end
-        )
+        map("n", "<leader>fg", "List Gitmoji options", function() builtin.symbols({ unpack(dropdown), sources = { "gitmoji" } }) end)
     end,
 }
