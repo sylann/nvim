@@ -29,3 +29,4 @@ vim.keymap.set("v", "<leader>!", ":'<,'>y v | vert new | put=system('', @v)<Left
 })
 
 vim.keymap.set("n", "<C-F>", "vi{:fold<CR>", { desc = "Fold current block" })
+vim.keymap.set("n", "<C-F>{", "^<S-V>f{%:fold<CR>", { desc = "Fold curly bracket scope starting on current line" })
