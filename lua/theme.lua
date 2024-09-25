@@ -299,6 +299,15 @@ function M.setup(hl_delegate, link_delegate)
     hl("htmlLink", syn.mark_emphase, _, U)
     hl("htmlSpecialChar", syn.number, _)
 
+    -- vimscript
+    hl("vimNotFunc", syn.keyword, _)
+    hl("vimFuncKey", syn.keyword, _)
+    hl("vimLet", syn.special, _)
+    hl("vimFor", syn.keyword, _)
+    hl("vimCommand", syn.keyword, _)
+    hl("vimEscape", syn.number, _)
+    hl("vimFunction", syn.procedure, _)
+
     -- Syntax (Treesitter)
     hl("@annotation", ui.blue_folder, _)
     hl("@attribute", syn.property, _, B, I)
