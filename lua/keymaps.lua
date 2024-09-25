@@ -24,4 +24,8 @@ vim.keymap.set("x", "↓", ":m '>+1<CR>gv=gv", { desc = "Move current selection 
 vim.keymap.set("n", "<C-K>", ":cprev<CR>zz", { desc = "Move to previous Quickfix" })
 vim.keymap.set("n", "<C-J>", ":cnext<CR>zz", { desc = "Move to next Quickfix" })
 
+vim.keymap.set("v", "<leader>!", ":'<,'>y v | vert new | put=system('', @v)<Left><Left><Left><Left><Left><Left>", {
+    desc = "Pipe selection to external program (the command following 'pipeto') and redirect output of the command to a new window to the right" 
+})
+
 vim.keymap.set("n", "<C-F>", "vi{:fold<CR>", { desc = "Fold current block" })
