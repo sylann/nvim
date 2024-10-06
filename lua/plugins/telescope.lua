@@ -48,13 +48,19 @@ return {
             },
             pickers = {
                 live_grep = {
-                    glob = {
+                    glob_pattern = {
                         "!**/__pycache__/*",
                         "!**/.git/*",
                         "!**/target/*",
                         "!**/node_modules/*",
+                        "!*-lock.*",
+                        "!Cargo.lock",
+                        "!go.sum",
                     },
-                    additional_args = function(opts) return { "--hidden", "--multiline" } end,
+                    additional_args = { "--hidden", "--multiline" },
+                    -- TODO: investigate telescope bug with smart-case search:
+                    -- it works but when a line contains a searched word in several case variations,
+                    -- it is always the first insensitive match that gets highlighted, which can be confusing.
                 },
                 find_files = {
                     --stylua: ignore
