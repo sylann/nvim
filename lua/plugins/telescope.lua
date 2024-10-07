@@ -114,7 +114,9 @@ return {
         map("n", "<leader>fd", "Find diagnostics", builtin.diagnostics)
         map("n", "<leader>ft", "Find files tracked by git", builtin.git_files)
         map("n", "<leader>fh", "Find current file's git revisions", telescope.extensions.git_file_history.git_file_history)
-        map("n", "<leader>ff", "Find all files in current workspace", builtin.find_files)
+        map("n", "<leader>ff", "Find filtered files in current workspace", builtin.find_files)
+        local find_files_no_ignore = function() builtin.find_files({ find_command = { "rg", "--files", "--hidden", "--no-ignore" } }) end
+        map("n", "<leader>f<S-F>", "Find all files in current workspace", find_files_no_ignore)
         map("n", "<leader>fn", "Find files in My Neovim Config", function() builtin.find_files({ cwd = vim.fn.stdpath("config") }) end)
         map("n", "<leader>fp", "Find files in Neovim installed plugins", function() builtin.find_files({ cwd = vim.fn.stdpath("data") }) end)
         map("n", "<leader>fl", "Find (Live Grep) in current workspace", builtin.live_grep)
