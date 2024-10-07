@@ -387,7 +387,7 @@ set background=%s
 ---@param filepath string?
 function M.generate_colorscheme(filepath)
     local color = require("color")
-    filepath = filepath or vim.fn.expand("~") .. "/.vim/colors/" .. M.name .. ".vim"
+    filepath = filepath or vim.fn.expand("~") .. "/.config/vim/colors/" .. M.name .. ".vim"
 
     local f, err = io.open(filepath, "w")
     if not f or err then
