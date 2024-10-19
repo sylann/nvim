@@ -88,29 +88,6 @@ vim.api.nvim_create_autocmd({ "User" }, {
     callback = UpdateAheadBehind,
 })
 
----Create a special highlight group that combines styles of `base_name`
----with `overrides` from `sec_name`.
----@param base_name string
----@param sec_name string
----@param overrides string[]
----@return string nested_name
-local function set_combined_hl(base_name, sec_name, overrides)
-    local base_hl = vim.api.nvim_get_hl(0, { name = base_name })
-    local sec_hl = vim.api.nvim_get_hl(0, { name = sec_name })
-    local name = base_name .. sec_name
-    local hl = table.copy(base_hl)
-    for _, k in ipairs(overrides) do
-        hl[k] = sec_hl[k]
-    end
-    vim.api.nvim_set_hl(0, name, hl)
-    return name
-end
-
-local diff_hl = { base = "SlAlt" }
-diff_hl.added = set_combined_hl(diff_hl.base, "Added", { "fg" })
-diff_hl.changed = set_combined_hl(diff_hl.base, "Changed", { "fg" })
-diff_hl.removed = set_combined_hl(diff_hl.base, "Removed", { "fg" })
-
 local function sl_branch()
     local head = vim.b.gitsigns_head
     if not head or head == "" then return "" end
@@ -120,21 +97,6 @@ local function sl_branch()
     if b > 0 then ab = ab .. " ↓" .. b end
     if #head > 25 then head = head:sub(1, 22) .. "…" end
     return "  " .. head .. ab .. " "
-end
-
-local function sl_gitsigns()
-    local status = vim.b.gitsigns_status_dict
-    if not status then return "" end
-    local a, c, r = status.added or 0, status.changed or 0, status.removed or 0
-
-    local o = ""
-    if a > 0 then o = o .. "%#" .. diff_hl.added .. "#+" .. a end
-    if c > 0 then o = o .. "%#" .. diff_hl.changed .. "#~" .. c end
-    if r > 0 then o = o .. "%#" .. diff_hl.removed .. "#-" .. r end
-    if o == "" then return "" end
-
-    local pad = "%#" .. diff_hl.base .. "# %*"
-    return o .. pad
 end
 
 local function sl_diagnostics()
@@ -206,7 +168,6 @@ function DrawMyStatusline()
     return table.concat(NonBlanks({
         "%#SlPrime# " .. mode.name .. " %*",
         "%#SlAlt#" .. sl_branch() .. "%*",
-        sl_gitsigns(),
         "%#SlPrimeText# %{expand('%:~:.')}%( %h%w%q%) %*",
         "%=%=",
         sl_diagnostics(),
