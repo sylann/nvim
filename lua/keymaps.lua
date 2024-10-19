@@ -18,8 +18,8 @@ vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "Paste currently copied text
 vim.keymap.set({ "n", "x" }, "<leader>y", [["+y]], { desc = "[Y]ank current line to system's clipboard" })
 vim.keymap.set("n", "<leader>Y", [["+Y]], { desc = "[Y]ank current line's content to system's clipboard" })
 
-vim.keymap.set("x", "↑", ":m '<-2<CR>gv=gv", { desc = "Move current selection up" })
-vim.keymap.set("x", "↓", ":m '>+1<CR>gv=gv", { desc = "Move current selection down" })
+vim.keymap.set("x", "<S-K>", ":m '<-2<CR>gv=gv", { desc = "Move current selection up" })
+vim.keymap.set("x", "<S-J>", ":m '>+1<CR>gv=gv", { desc = "Move current selection down" })
 
 vim.keymap.set("n", "<C-K>", ":cprev<CR>zz", { desc = "Move to previous Quickfix" })
 vim.keymap.set("n", "<C-J>", ":cnext<CR>zz", { desc = "Move to next Quickfix" })
