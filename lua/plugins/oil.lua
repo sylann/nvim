@@ -30,7 +30,7 @@ return {
                 ["<C-p>"] = actions.preview,
                 ["<C-c>"] = actions.close,
                 ["<C-l>"] = actions.refresh,
-                ["<BS>"] = actions.parent,
+                ["µ"] = actions.parent,
                 ["_"] = actions.open_cwd,
                 ["-"] = actions.cd,
                 ["gs"] = actions.change_sort,
@@ -43,6 +43,6 @@ return {
         -- INFO: Keymaps
         local map = Mapper({})
 
-        map("n", "<BS>", "Open parent directory", "<CMD>Oil<CR>")
+        map("n", "µ", "Open parent directory", "<CMD>Oil<CR>")
     end,
 }
