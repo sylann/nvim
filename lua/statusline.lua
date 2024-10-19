@@ -99,16 +99,14 @@ local function sl_branch()
     return " " .. head .. ab
 end
 
-local function sl_diagnostics()
-    if vim.bo.filetype == "lazy" then return "" end -- Skip diagnostics of LazyNvim
-
-    local buf_diags = vim.diagnostic.get(0)
+---@param diags vim.Diagnostic[]
+---@return string
+local function get_sl_diagnostics(diags)
     local counts = { ERROR = 0, WARN = 0, INFO = 0, HINT = 0 }
-    for _, diag in ipairs(buf_diags) do
+    for _, diag in ipairs(diags) do
         local k = vim.diagnostic.severity[diag.severity]
         counts[k] = counts[k] + 1
     end
-
     local s = ""
     if counts.ERROR > 0 then s = s .. " %#DiagnosticError# " .. counts.ERROR end
     if counts.WARN > 0 then s = s .. " %#DiagnosticWarn# " .. counts.WARN end
@@ -117,6 +115,17 @@ local function sl_diagnostics()
     if s == "" then return "" end
     return s:sub(2) .. "%*"
 end
+
+local sl_diagnostics = ""
+
+vim.api.nvim_create_autocmd('DiagnosticChanged', {
+    callback = function (args)
+        if vim.bo.filetype == "lazy" then return end -- Skip diagnostics of LazyNvim
+
+        sl_diagnostics = get_sl_diagnostics(args.data.diagnostics)
+        vim.cmd("redrawstatus")
+    end
+})
 
 -- NOTE: The intent is to indicate which filetype is detected. The filename is irrelevant.
 local function sl_filetype()
@@ -180,7 +189,7 @@ function DrawMyStatusline()
         Block("SlAlt", { sl_branch() }),
         Block("SlPrimeText", { "%{expand('%:~:.')}%( %h%w%q%)" }),
         "%=",
-        sl_diagnostics(),
+        sl_diagnostics,
         "%=",
         Block("", { sl_filetype(), sl_encoding(), sl_fileformat() }),
         Block("SlAlt", { sl_filesize(), " %L" }),
