@@ -65,3 +65,19 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = sylann_augroup,
     desc = "On saving a plugin file, execute its config function (if available).",
 })
+
+if vim.fn.has("wsl") then
+    vim.api.nvim_create_autocmd({ "BufEnter" }, {
+        pattern = "/mnt/c/*",
+        command = "set lazyredraw",
+        group = sylann_augroup,
+        desc = "On opening a windows file, set lazyredraw",
+    })
+
+    vim.api.nvim_create_autocmd({ "BufLeave" }, {
+        pattern = "/mnt/c/*",
+        command = "set nolazyredraw",
+        group = sylann_augroup,
+        desc = "On leaving a windows file, set nolazyredraw",
+    })
+end
