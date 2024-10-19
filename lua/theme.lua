@@ -77,8 +77,8 @@ M.colors.syn = {
     mark_header_2 = "#77CE57",
     mark_header_3 = "#3BC4A6",
     mark_header_4 = "#4CBCDF",
-    mark_strong = "#8FB2EF",
-    mark_emphase = "#ACC6F2",
+    mark_strong = "#EDD49D",
+    mark_emphase = "#D7C7A4",
     mark_raw = "#CE9178",
     mark_quote = "#6796E6",
     mark_tag = "#569CD6",
@@ -190,6 +190,8 @@ function M.setup(hl_delegate, link_delegate)
     hl("DiagnosticOk", util.success, _)
 
     -- Git
+    hl("diffLine", util.debug, _)
+    hl("diffSubname", ui.gray_050, _)
     hl("DiffAdd", _, util.add_950)
     hl("DiffChange", _, util.change_950)
     hl("DiffDelete", _, util.remove_950)
@@ -299,6 +301,11 @@ function M.setup(hl_delegate, link_delegate)
     hl("htmlLink", syn.mark_emphase, _, U)
     hl("htmlSpecialChar", syn.number, _)
 
+    -- Markdown
+
+    hl("markdownBold", syn.mark_strong, _, B)
+    hl("markdownBoldDelimiter", syn.punctuation, _, B)
+
     -- vimscript
     hl("vimNotFunc", syn.keyword, _)
     hl("vimFuncKey", syn.keyword, _)
@@ -336,12 +343,18 @@ function M.setup(hl_delegate, link_delegate)
     hl("@type.builtin", syn.type_2, _, B, I)
     link("@variable", "Variable")
     hl("@variable.builtin", syn.special, _)
+    hl("@constant.git_rebase", syn.type_1, _)
     hl("@spell.markdown", syn.symbol, _)
     hl("@markup.heading.1.markdown", syn.mark_header_1, _, B)
     hl("@markup.heading.2.markdown", syn.mark_header_2, _, B)
     hl("@markup.heading.3.markdown", syn.mark_header_3, _, B)
     hl("@markup.heading.4.markdown", syn.mark_header_4, _, B)
-    hl("@markup.raw.block.markdown", syn.bytes, _, B)
+    hl("@markup.raw.block.markdown", syn.mark_quote, _, B)
+    hl("@markup.list.markdown", syn.mark_quote, _)
+    hl("@markup.strong.markdown_inline", syn.mark_strong, _, B)
+    hl("@markup.italic.markdown_inline", syn.mark_emphase, _, I)
+    hl("@markup.link.url.markdown_inline", syn.mark_raw, _, U)
+    hl("@markup.link.label.markdown_inline", syn.mark_quote, _, U)
     hl("@text.title.1.marker", syn.mark_header_1, _, B)
     hl("@text.title.2.marker", syn.mark_header_2, _, B)
     hl("@text.title.3.marker", syn.mark_header_3, _, B)
