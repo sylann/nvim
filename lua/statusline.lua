@@ -96,7 +96,7 @@ local function sl_branch()
     if a > 0 then ab = ab .. " ↑" .. a end
     if b > 0 then ab = ab .. " ↓" .. b end
     if #head > 25 then head = head:sub(1, 22) .. "…" end
-    return "  " .. head .. ab .. " "
+    return " " .. head .. ab
 end
 
 local function sl_diagnostics()
@@ -115,40 +115,35 @@ local function sl_diagnostics()
     if counts.INFO > 0 then s = s .. " %#DiagnosticInfo# " .. counts.INFO end
     if counts.HINT > 0 then s = s .. " %#DiagnosticHint# " .. counts.HINT end
     if s == "" then return "" end
-    return s:sub(2) .. "%* ▏"
+    return s:sub(2) .. "%*"
 end
 
 -- NOTE: The intent is to indicate which filetype is detected. The filename is irrelevant.
 local function sl_filetype()
     local ft = vim.bo.filetype
-    if not devicons then return ft .. " " end
+    if not devicons then return ft end
 
     local icon, hl = devicons.get_icon_by_filetype(ft)
-    if not icon then return ft .. " " end
+    if not icon then return ft end
 
-    return "%#" .. hl .. "#" .. icon .. "%* " .. ft .. " "
+    return "%#" .. hl .. "#" .. icon .. "%* " .. ft
 end
 
 local function sl_encoding()
     local encoding = vim.opt.fileencoding:get()
     if encoding == "" then return "" end
-    return encoding .. " "
+    return encoding
 end
 
 local function sl_fileformat()
     local f = vim.bo.fileformat
-    if f == "unix" then return "LF " end
-    if f == "dos" then return "CRLF " end
-    if f == "mac" then return "CR " end
-    return f .. "?? "
+    if f == "unix" then return "LF" end
+    if f == "dos" then return "CRLF" end
+    if f == "mac" then return "CR" end
+    return f .. "??"
 end
 
-local function sl_filesize()
-    local file = vim.fn.expand("%:p")
-    if file == nil or #file == 0 then return "  0 " end
-    local size = vim.fn.getfsize(file)
-    if size <= 0 then return "  0 " end
-
+local function format_size(size)
     local units = { "", "K", "M", "G" }
     local i = 1
     while size > 1024 and i < #units do
@@ -156,8 +151,23 @@ local function sl_filesize()
         i = i + 1
     end
 
-    local fmt = i == 1 and "  %d%s " or "  %.1f%s "
+    local fmt = i == 1 and "%d%s" or "%.1f%s"
     return fmt:format(size, units[i])
+end
+
+local function sl_filesize()
+    local file = vim.fn.expand("%:p")
+    local size = file and #file > 0 and vim.fn.getfsize(file) or 0
+    return " " .. format_size(size)
+end
+
+local function Block(hl, items)
+    local out = table.concat(NonBlanks(items), " ")
+    if out ~= "" then
+        out = " " .. out .. " "
+        if hl ~= "" then out = "%#" .. hl .. "#" .. out .. "%*" end
+    end
+    return out
 end
 
 function DrawMyStatusline()
@@ -165,21 +175,17 @@ function DrawMyStatusline()
     vim.cmd("hi link SlPrime " .. mode.hl)
     vim.cmd("hi link SlPrimeText " .. (mode.hl2 or "Statusline"))
 
-    return table.concat(NonBlanks({
-        "%#SlPrime# " .. mode.name .. " %*",
-        "%#SlAlt#" .. sl_branch() .. "%*",
-        "%#SlPrimeText# %{expand('%:~:.')}%( %h%w%q%) %*",
-        "%=%=",
+    return table.concat({
+        Block("SlPrime", { mode.name }),
+        Block("SlAlt", { sl_branch() }),
+        Block("SlPrimeText", { "%{expand('%:~:.')}%( %h%w%q%)" }),
+        "%=",
         sl_diagnostics(),
-        sl_filetype(),
-        sl_encoding(),
-        sl_fileformat(),
-        "%#SlAlt#",
-        sl_filesize(),
-        " %L ",
-        "%#SlPrime# %l:%v ",
-    }))
+        "%=",
+        Block("", { sl_filetype(), sl_encoding(), sl_fileformat() }),
+        Block("SlAlt", { sl_filesize(), " %L" }),
+        Block("SlPrime", { "%l:%v" }),
+    })
 end
 
-vim.o.showmode = false
 vim.o.statusline = "%!v:lua.DrawMyStatusline()"

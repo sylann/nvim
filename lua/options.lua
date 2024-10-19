@@ -16,7 +16,7 @@ vim.opt.mouse = "a"
 vim.opt.cursorline = true
 vim.opt.number = true
 vim.opt.relativenumber = false
-vim.opt.showmode = true -- disable if shown in status line
+vim.opt.showmode = false
 vim.opt.signcolumn = "yes"
 
 vim.opt.wrap = false
