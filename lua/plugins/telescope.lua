@@ -134,6 +134,7 @@ return {
             local sanitized = vim.fn.escape(selection, "/{}[]^$+*."):gsub("\n", "\\n")
             builtin.live_grep({ default_text = sanitized })
         end)
-        map("n", "<leader>fg", "List Gitmoji options", function() builtin.symbols({ unpack(dropdown), sources = { "gitmoji" } }) end)
+        map("i", "<C-L>j", "List Emoji options", function() builtin.symbols({ unpack(dropdown), sources = { "emoji" } }) end)
+        map("i", "<C-L>g", "List Gitmoji options", function() builtin.symbols({ unpack(dropdown), sources = { "gitmoji" } }) end)
     end,
 }
