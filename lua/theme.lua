@@ -46,12 +46,15 @@ M.colors.util = {
     success_100 = "#AAF2A6",
     debug = "#B267E6",
     remove_950 = "#420000",
+    remove_850 = "#720000",
     remove_600 = "#B4151B",
     remove_300 = "#E74E3A",
     add_950 = "#004200",
+    add_850 = "#007200",
     add_600 = "#58BC0C",
     add_300 = "#7ED258",
     change_950 = "#212100",
+    change_850 = "#514100",
     change_600 = "#CCA700",
     change_300 = "#EBCB75",
 }
@@ -195,7 +198,7 @@ function M.setup(hl_delegate, link_delegate)
     hl("DiffAdd", _, util.add_950)
     hl("DiffChange", _, util.change_950)
     hl("DiffDelete", _, util.remove_950)
-    hl("DiffText", _, util.add_600)
+    hl("DiffText", _, util.change_850)
     hl("Added", util.add_300, _)
     hl("Changed", util.change_300, _)
     hl("Removed", util.remove_300, _)
