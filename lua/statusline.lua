@@ -189,9 +189,7 @@ function DrawMyStatusline()
         Block("SlAlt", { sl_branch() }),
         Block("SlPrimeText", { "%{expand('%:~:.')}%( %h%w%q%)" }),
         "%=",
-        sl_diagnostics,
-        "%=",
-        Block("", { sl_filetype(), sl_encoding(), sl_fileformat() }),
+        Block("", { sl_diagnostics, sl_filetype(), sl_encoding(), sl_fileformat() }),
         Block("SlAlt", { sl_filesize(), " %L" }),
         Block("SlPrime", { "%l:%v" }),
     })
