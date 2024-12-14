@@ -105,7 +105,7 @@ return {
 
         -- INFO: Keymaps
         local map = Mapper({})
-        map("n", "<leader><leader>", "Find Telescope builtins", builtin.builtin)
+        map("n", "<leader><leader>", "Find Telescope builtins", function() return builtin.builtin({ include_extensions = true }) end)
         map("n", "<leader>fr", "Resume last Telescope find results", builtin.resume)
         map("n", "<leader>hh", "Find Help", builtin.help_tags)
         map("n", "<leader>bb", "Find buffers", builtin.buffers)
