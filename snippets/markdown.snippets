@@ -1,26 +1,26 @@
 snippet link
-	[${1}](#${2})
+	[${1:text}](#${2:document-title})
 
 snippet url
-	[${1}](https://${2})
+	[${1:text}](https://${2:example.com})
 
 snippet linkfoot
-	[${1}][${2}]
-	[${2}]: ${3}
+	[${1:text}][${2:link-id}]
+	[$2]: #${3:document-title}
 
 snippet urlfoot
-	[${1}][${2}]
-	[${2}]: https://${3}
+	[${1:text}][${2:link-id}]
+	[$2]: https://${3:example.com}
 
 snippet img
-	![${1}](${2} "${3}")
+	![${1:alt text}](${2:link-to-image} "${3:title text}")
 
 snippet table2
-	| ${1} | ${2} |
+	| ${1:col1} | ${2:col2} |
 	| - | - |
-	| ${3} | ${4} |
+	| ${3:val1} | ${4:val2} |
 
 snippet table3
-	| ${1} | ${2} | ${3} |
+	| ${1:col1} | ${2:col2} | ${3:col3} |
 	| - | - | - |
-	| ${4} | ${5} | ${6} |
+	| ${4:val1} | ${5:val2} | ${6:val3} |

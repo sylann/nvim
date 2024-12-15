@@ -1,17 +1,43 @@
-snippet (
-	(${1} for ${2} in ${3})
+snippet genc
+	(${1:value} for ${2:item} in ${3:iterable})
 
-snippet [
-	[${1} for ${2} in ${3}]
+snippet listc
+	[${1:value} for ${2:item} in ${3:iterable}]
 
-snippet {
-	{${1} for ${2} in ${3}}
+snippet setc
+	{${1:value} for ${2:item} in ${3:iterable}}
 
-snippet {:
-	{${1}: ${2} for ${3} in ${4}}
+snippet dictc
+	{${1:key}: ${2:value} for ${3:item} in ${4:iterable}}
 
-snippet lam
-	${1} = lambda${2}: ${3}
+snippet for
+	for ${1:item} in ${2:iterable}:
+	    pass$0
+
+snippet fordict
+	for ${1:key}, ${2:value} in ${2:mapping}.items():
+	    pass$0
+
+snippet forrange
+	for ${1:i} in range(${2:size}):
+	    pass$0
+
+snippet forenu
+	for ${1:i}, ${2:item} in enumerate(${3:iterable}):
+	    pass$0
+
+snippet lambda
+	${1:name} = lambda${2: x}: ${3:42}
+
+snippet impt
+	import typing as t$0
+
+snippet impdt
+	from datetime import datetime$0
+
+snippet withopen
+	with open("${1:fileapth}", mode="${2:rt}") as f:
+	    lines = f.readlines()
 
 snippet ifmain
 	if __name__ == '__main__':
