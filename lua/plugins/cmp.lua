@@ -37,10 +37,6 @@ return {
                 ["<C-u>"] = cmp.mapping.scroll_docs(-4),
                 ["<C-d>"] = cmp.mapping.scroll_docs(4),
                 ["<Enter>"] = cmp.mapping.confirm({ select = true }),
-                ["<Tab>"] = cmp.mapping.confirm({ select = true }),
-                ["<C-Space>"] = cmp.mapping.complete({}),
-                ["<C-;>"] = cmp.mapping(function(fb) return snippy.can_expand_or_advance() and snippy.expand_or_advance() or fb() end, { "i", "s" }),
-                ["<C-,>"] = cmp.mapping(function(fb) return snippy.can_jump(-1) and snippy.previous() or fb() end, { "i", "s" }),
             }),
 
             sources = {
