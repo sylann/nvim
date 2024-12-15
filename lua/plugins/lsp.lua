@@ -92,7 +92,7 @@ return {
             pyright = {},
             rust_analyzer = {},
             -- INFO: possible alternative: https://github.com/pmizio/typescript-tools.nvim
-            tsserver = {
+            ts_ls = {
                 init_options = {
                     plugins = {
                         {
