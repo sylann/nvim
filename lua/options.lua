@@ -50,15 +50,9 @@ vim.opt.foldlevelstart = 99
 
 if vim.fn.has("wsl") then
     vim.g.clipboard = {
-        name = "clip.exe",
-        copy = {
-            ["+"] = "clip.exe",
-            ["*"] = "clip.exe",
-        },
-        paste = {
-            ["+"] = 'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
-            ["*"] = 'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
-        },
+        name = "WSL Clipboard",
+        copy = { ["+"] = "wcopy", ["*"] = "wcopy" },
+        paste = { ["+"] = "wpaste", ["*"] = "wpaste" },
         cache_enabled = false,
     }
 end
