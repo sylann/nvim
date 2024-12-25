@@ -13,6 +13,7 @@ vim.opt.splitright = true
 vim.opt.laststatus = 3 -- Only one status line per window
 vim.opt.mouse = "a"
 
+vim.opt.guicursor = "n-v-sm:block,i-c-ci-ve:ver25,r-cr-o:hor20,a:Cursor"
 vim.opt.cursorline = true
 vim.opt.number = true
 vim.opt.relativenumber = false
