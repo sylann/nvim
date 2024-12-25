@@ -16,7 +16,7 @@ vim.opt.mouse = "a"
 vim.opt.guicursor = "n-v-sm:block,i-c-ci-ve:ver25,r-cr-o:hor20,a:Cursor"
 vim.opt.cursorline = true
 vim.opt.number = true
-vim.opt.relativenumber = false
+vim.opt.relativenumber = true
 vim.opt.showmode = false
 vim.opt.signcolumn = "yes"
 
