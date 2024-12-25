@@ -29,3 +29,8 @@ vim.keymap.set("v", "<leader>!", ":'<,'>y v | vert new | put=system('', @v)<Left
 
 vim.keymap.set("x", "<C-F>", ":fold<CR>", { desc = "Fold current selection" })
 vim.keymap.set("n", "<C-F>", "^<S-V>f{%:fold<CR>", { desc = "Fold curly bracket scope starting on current line" })
+
+vim.keymap.set("n", "<S-Left>", ":sil vert res -1<CR>", { desc = "Decrease width of vertical split pane" })
+vim.keymap.set("n", "<S-Right>", ":sil vert res +1<CR>", { desc = "Increase width of vertical split pane" })
+vim.keymap.set("n", "<S-Up>", ":sil res -1<CR>", { desc = "Decrease height of horizontal split pane" })
+vim.keymap.set("n", "<S-Down>", ":sil res +1<CR>", { desc = "Increase height of horizontal split pane" })

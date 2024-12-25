@@ -36,7 +36,6 @@ vim.opt.grepprg = "rg --vimgrep --smart-case"
 
 vim.opt.wildmode = "list:lastused:longest"
 vim.opt.diffopt = "internal,filler,closeoff,vertical"
-vim.opt.keymodel = "startsel"
 
 -- Indentation
 vim.opt.autoindent = false
