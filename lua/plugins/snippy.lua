@@ -3,6 +3,10 @@ return {
     "dcampos/nvim-snippy",
 
     opts = {
+        scopes = {
+            typescript = { '_', 'javascript', 'typescript' },
+            vue = { '_', 'vue', 'html', 'css', 'javascript', 'typescript' },
+        },
         mappings = {
             is = {
                 ["<Tab>"] = "expand_or_advance",

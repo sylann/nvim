@@ -8,8 +8,14 @@ snippet vfor
 		${5:content}
 	</$4>$0
 
+snippet vslot
+	<template #${1:name}></template>
+
 snippet slot
-	<slot #${1:name}></slot>
+	<slot name="${1:name}"></slot>
+
+snippet com
+	<!-- ${1:TODO: } -->
 
 snippet transition
 	<transition name="${1:fade}">
@@ -60,29 +66,8 @@ snippet vuetemplate
 	  ${2:Script}
 	</script>
 
-snippet implib
-	import ${1:lib} from "$1"$0
-
-snippet impoflib
-	import${1: type} { ${3:thing} } from "${2:lib}"$0
-
-snippet impmodule
-	import ${1:module} from "@/${2:path/to/}${3:$1}"$0
-
-snippet impofmodule
-	import${1: type} { ${4:thing} } from "@/${2:path/to/module}"$0
-
 snippet impcomponent
 	import ${1:ComponentName} from "@/components/${2:path/to/}$1.vue"$0
 
 snippet usestore
 	const ${2:n}Store = useStore${1:Name}()$0
-
-snippet type
-	type ${1:Typename} = {
-	  ${2:field}: ${3:string}
-	}$0
-
-snippet function
-	function ${1:funcName}(${2:args})${3:: string} {
-	}$0

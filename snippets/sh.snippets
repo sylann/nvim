@@ -32,3 +32,8 @@ snippet case
 		${2:value})
 			${3:echo "do something"};;
 	esac$0
+
+snippet readvar
+	IFS= read -r -d'' ${1:variable} << EOF
+	$0
+	EOF

@@ -1,0 +1,33 @@
+snippet implib
+	import ${1:lib} from "$1"$0
+
+snippet impoflib
+	import${1: type} { ${3:thing} } from "${2:lib}"$0
+
+snippet impmodule
+	import ${1:module} from "@/${2:path/to/}${3:$1}"$0
+
+snippet impofmodule
+	import${1: type} { ${4:thing} } from "@/${2:path/to/module}"$0
+
+snippet usestore
+	const ${2:n}Store = useStore${1:Name}()$0
+
+snippet type
+	type ${1:Typename} = {
+	  ${2:field}: ${3:string}
+	}$0
+
+snippet randint
+	function randomInt(min: number, max: number): number {
+	  return Math.floor(Math.random() * (max - min) + min)
+	}$0
+
+snippet randsample
+	function randomSample<T>(arr: T[], size: number): T[] {
+	  const sample: T[] = [...arr]
+	  // shuffle the array by sorting with random order
+	  sample.sort((_a, _b) => Math.random() - 0.5) // [-0.5, 0.5[
+	  sample.length = size // remove elements after size
+	  return sample
+	}$0
