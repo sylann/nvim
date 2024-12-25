@@ -36,7 +36,7 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
 
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
     pattern = { "*.env", ".env.example", "env" },
-    callback = function() vim.diagnostic.disable(0) end,
+    callback = function() vim.diagnostic.enable(false) end,
     group = sylann_augroup,
     desc = "Disable LSP in env files",
 })
