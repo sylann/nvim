@@ -13,11 +13,11 @@ return {
         require("todo-comments").setup({
             signs = true,
             keywords = {
-                FIX = { icon = " ", color = safe(c.util.debug), alt = { "FIXME", "BUG" } },
-                HACK = { icon = " ", color = safe(c.util.warning_100) },
-                WARN = { icon = " ", color = safe(c.util.warning_100), alt = { "WARNING", "XXX" } },
-                NOTE = { icon = " ", color = safe(c.util.hint_100), alt = { "HINT", "INFO" } },
-                TODO = { icon = " ", color = safe(c.util.success_100) },
+                FIX = { icon = " ", color = safe(c.ui.debug), alt = { "FIXME", "BUG" } },
+                HACK = { icon = " ", color = safe(c.ui.warning_light) },
+                WARN = { icon = " ", color = safe(c.ui.warning_light), alt = { "WARNING", "XXX" } },
+                NOTE = { icon = " ", color = safe(c.ui.hint_light), alt = { "HINT", "INFO" } },
+                TODO = { icon = " ", color = safe(c.ui.success_light) },
                 PERF = nil,
                 TEST = nil,
             },

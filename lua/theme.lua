@@ -4,59 +4,47 @@ M.name = "sylfire"
 M.background = "dark"
 M.colors = {}
 
-M.colors.ui = {
-    gray_950 = "#0B0B0B",
-    gray_900 = "#191919",
-    gray_800 = "#1B1F27",
-    gray_700 = "#282c34",
-    gray_600 = "#3E4451",
-    gray_500 = "#545862",
-    gray_400 = "#6B737F",
-    gray_300 = "#8B92A8",
-    gray_200 = "#ABB2BF",
-    gray_100 = "#C8CCD4",
-    gray_050 = "#D4D4D4",
-    blue_900 = "#042e48",
-    blue_800 = "#083c5a",
-    blue_700 = "#264f78",
-    blue_600 = "#007ACC",
-    blue_500 = "#0195f7",
-    blue_folder = "#519FDF",
-    blue_note = "#77A0EE",
-    brown = "#613214",
-    copper = "#C18A56",
-    yellow_light = "#D5B06B",
-    yellow_mid = "#D8B43C",
-    green_dark = "#118811",
-    green_mid = "#88B369",
-    green_pure = "#00FF00",
-    cyan_dark = "#46A6B2",
-}
 
-M.colors.util = {
+M.colors.ui = {
+    bg1 = "#0B0B0B",
+    bg2 = "#121212",
+    bg3 = "#1B1B1B",
+    bg4 = "#2D2D2D",
+    fg1 = "#D4D4D4",
+    fg2 = "#ABB2BF",
+    fg3 = "#8B92A8",
+    fg_dim = "#6B737F",
+    fg_disabled = "#545862",
+    sel1 = "#083c5a",
+    sel2 = "#042e48",
+    title = "#519FDF",
+    search = "#3E4451",
+    match = "#D8B43C",
+    match_dim = "#D5B06B",
+    cursor = "#00FF00",
     error = "#F44747",
-    error_100 = "#F28686",
+    error_light = "#F28686",
     warning = "#FF8800",
-    warning_100 = "#FAAF5E",
+    warning_light = "#FAAF5E",
     info = "#FFCC66",
-    info_100 = "#F2D996",
+    info_light = "#F2D996",
     hint = "#66C9FF",
-    hint_100 = "#A6D7F2",
+    hint_light = "#A6D7F2",
     success = "#14C50B",
-    success_100 = "#AAF2A6",
+    success_light = "#AAF2A6",
     debug = "#B267E6",
-    remove_950 = "#420000",
-    remove_850 = "#720000",
-    remove_600 = "#B4151B",
-    remove_300 = "#E74E3A",
-    add_950 = "#004200",
-    add_850 = "#007200",
-    add_600 = "#58BC0C",
-    add_300 = "#7ED258",
-    change_950 = "#212100",
-    change_850 = "#514100",
-    change_600 = "#CCA700",
-    change_300 = "#EBCB75",
+    remove_darkest = "#420000",
+    remove_dark = "#720000",
+    remove = "#B4151B",
+    remove_light = "#E74E3A",
+    add_darkest = "#004200",
+    add_dark = "#007200",
+    add = "#58BC0C",
+    add_light = "#7ED258",
+    change_darkest = "#212100",
+    change_dark = "#514100",
+    change = "#CCA700",
+    change_light = "#EBCB75",
 }
 
 M.colors.syn = {
@@ -74,7 +62,7 @@ M.colors.syn = {
     namespace = "#B2AA93",
     symbol = "#D9D3C1",
     punctuation = "#757473",
-    comment = "#6F655A",
+    comment = "#7F775A",
     docstring = "#799857",
     mark_header_1 = "#D7F447",
     mark_header_2 = "#77CE57",
@@ -88,149 +76,144 @@ M.colors.syn = {
     mark_tag_bad = "#A09030",
 }
 
----@alias HlHandler fun(name: string, fg: string, bg: string, ...: string)
+---@alias Attr "bold" | "italic" | "strikethrough" | "underline" | "undercurl" | "underdouble" | "underdotted" | "underdashed"
+---@alias HlHandler fun(name: string, fg: string, bg: string, ...: Attr)
 ---@alias LinkHandler fun(name: string, target_name: string)
 
----@type HlHandler
-local hl_handler = function(name, fg, bg, ...)
-    local opts = { fg = fg, bg = bg }
-    for _, flag in ipairs({ ... }) do
-        opts[flag] = true
+function M.setup()
+    ---@type HlHandler
+    local hl_handler = function(name, fg, bg, ...)
+        local opts = { fg = fg, bg = bg }
+        for _, flag in ipairs({ ... }) do
+            opts[flag] = true
+        end
+        vim.api.nvim_set_hl(0, name, opts)
     end
-    vim.api.nvim_set_hl(0, name, opts)
-end
 
----@type LinkHandler
-local link_handler = function(link_name, source_name)
-    local opts = { link = source_name }
-    vim.api.nvim_set_hl(0, link_name, opts)
+    ---@type LinkHandler
+    local link_handler = function(link_name, source_name)
+        local opts = { link = source_name }
+        vim.api.nvim_set_hl(0, link_name, opts)
+    end
+
+    M.configure(hl_handler, link_handler)
 end
 
 ---Setup highlight groups for this theme
----@param hl_delegate HlHandler?
----@param link_delegate LinkHandler?
-function M.setup(hl_delegate, link_delegate)
+---@param hl HlHandler
+---@param link LinkHandler
+function M.configure(hl, link)
     vim.o.background = M.background
     vim.o.termguicolors = true
     vim.g.colors_name = M.name
 
     local _ = "NONE"
-    local U = "underline"
-    local B = "bold"
-    local I = "italic"
-    local S = "strikethrough"
-
-    local hl = hl_delegate or hl_handler
-    local link = link_delegate or link_handler
-
     local ui = M.colors.ui
     local syn = M.colors.syn
-    local util = M.colors.util
 
     -- UI
-    hl("ColorColumn", _, ui.gray_800)
-    hl("Conceal", ui.gray_500, _)
+    hl("ColorColumn", _, ui.bg3)
+    hl("Conceal", ui.fg_disabled, _)
     link("CurSearch", "Search")
-    hl("Cursor", _, ui.green_pure)
-    hl("CursorLine", _, ui.gray_900)
-    hl("CursorLineNr", ui.gray_050, ui.gray_900)
-    hl("Directory", ui.blue_folder, _)
-    hl("EndOfBuffer", ui.blue_800, _)
-    hl("ErrorMsg", util.error, _, B)
-    hl("FloatBorder", ui.gray_800, ui.gray_900)
-    hl("FoldColumn", ui.gray_500, ui.gray_800)
-    hl("Folded", ui.gray_500, ui.gray_800)
-    hl("IncSearch", _, ui.gray_500)
-    hl("LineNr", ui.gray_400, _)
-    hl("MatchParen", ui.yellow_mid, _, U)
-    hl("MatchParenCur", _, _, U)
-    hl("ModeMsg", ui.gray_050, ui.gray_800)
-    hl("MoreMsg", ui.copper, _)
-    hl("MsgArea", ui.gray_050, _)
-    hl("MsgSeparator", ui.gray_050, _)
-    hl("NonText", ui.gray_400, _)
-    hl("Normal", ui.gray_050, _)
-    hl("NormalFloat", _, ui.gray_900)
+    hl("Cursor", _, ui.cursor)
+    hl("CursorLine", _, ui.bg2)
+    hl("CursorLineNr", ui.fg1, ui.bg2)
+    hl("Directory", ui.title, _)
+    hl("EndOfBuffer", ui.title, _)
+    hl("ErrorMsg", ui.error, _, "bold")
+    hl("FloatBorder", ui.bg3, ui.bg2)
+    hl("FoldColumn", ui.fg_disabled, ui.bg3)
+    hl("Folded", ui.fg_disabled, ui.bg3)
+    hl("IncSearch", _, ui.fg_disabled)
+    hl("LineNr", ui.fg_dim, _)
+    hl("MatchParen", ui.match, _, "underline")
+    hl("MatchParenCur", _, _, "underline")
+    hl("ModeMsg", ui.fg1, ui.bg3)
+    hl("MoreMsg", ui.title, _)
+    hl("MsgArea", ui.fg1, _)
+    hl("MsgSeparator", ui.fg1, _)
+    hl("NonText", ui.fg_dim, _)
+    hl("Normal", ui.fg1, _)
+    hl("NormalFloat", _, ui.bg2)
     link("NormalNC", "Normal")
-    hl("Pmenu", ui.gray_100, ui.gray_800)
-    hl("PmenuSbar", _, ui.gray_800)
-    hl("PmenuSel", _, ui.blue_900)
-    hl("PmenuThumb", _, ui.gray_800)
-    hl("Question", ui.copper, _)
-    hl("QuickFixLine", _, ui.blue_900)
-    hl("Search", _, ui.gray_600)
+    hl("Pmenu", ui.fg1, ui.bg3)
+    hl("PmenuSbar", _, ui.bg3)
+    hl("PmenuSel", _, ui.sel2)
+    hl("PmenuThumb", _, ui.bg3)
+    hl("Question", ui.title, _)
+    hl("QuickFixLine", _, ui.sel2)
+    hl("Search", _, ui.search)
     hl("SignColumn", _, _)
-    hl("SpecialKey", ui.blue_folder, _, B)
-    hl("SpellBad", util.error, _, U)
-    hl("SpellCap", ui.yellow_light, _, U)
-    hl("SpellLocal", ui.green_mid, _, U)
-    hl("SpellRare", util.debug, _, U)
-    hl("Statusline", ui.gray_400, _)
-    hl("StatusLineNC", ui.gray_500, _)
-    hl("Substitute", ui.gray_100, ui.brown)
-    hl("TabLine", ui.gray_100, ui.gray_700)
-    hl("TabLineFill", ui.gray_700, ui.gray_700)
-    hl("TabLineSel", ui.gray_050, ui.gray_700)
-    hl("TermCursor", _, util.debug)
+    hl("SpecialKey", ui.title, _, "bold")
+    hl("SpellBad", ui.error_light, _, "undercurl")
+    hl("SpellCap", ui.info_light, _, "undercurl")
+    hl("SpellLocal", ui.warning_light, _, "undercurl")
+    hl("SpellRare", ui.debug, _, "undercurl")
+    hl("Statusline", ui.fg3, ui.bg3)
+    hl("StatusLineNC", ui.fg_disabled, ui.bg1)
+    hl("Substitute", ui.fg1, ui.add_dark)
+    hl("TabLine", ui.fg_disabled, ui.bg2)
+    hl("TabLineFill", _, ui.bg1)
+    hl("TabLineSel", ui.fg1, ui.bg3)
+    hl("TermCursor", _, ui.fg_dim) -- INFO: this is when terminal mode is active (insert mode in terminal buffer)
     hl("TermCursorNC", _, _)
-    hl("Title", ui.blue_folder, _, B)
-    hl("TroubleIndent", ui.green_pure, ui.green_dark)
-    hl("WinSeparator", ui.gray_500, _)
-    hl("Visual", _, ui.blue_900)
-    hl("WarningMsg", util.error, _)
-    hl("WildMenu", ui.gray_050, _)
+    hl("Title", ui.title, _, "bold")
+    hl("Visual", _, ui.sel2)
+    hl("WarningMsg", ui.error, _)
+    hl("WildMenu", ui.fg1, _)
+    hl("WinSeparator", ui.fg_disabled, _)
 
     -- Statusline modes (non-standard hl groups)
-    hl("SlAlt", ui.gray_050, "#2D2D2D")
-    hl("SlNormal", ui.gray_050, "#166682")
-    hl("SlProtected", ui.gray_950, ui.gray_050)
-    hl("SlModified", ui.gray_050, "#CC5533")
+    hl("SlAlt", ui.fg1, ui.bg4)
+    hl("SlNormal", ui.fg1, "#166682")
+    hl("SlProtected", ui.bg1, ui.fg1)
+    hl("SlModified", ui.fg1, "#CC5533")
     hl("SlModifiedText", "#EE5533", "#2C0A00")
-    hl("SlReadonly", ui.gray_950, "#8B92A8")
-    hl("SlProblem", ui.gray_050, "#CC1166")
+    hl("SlReadonly", ui.bg1, "#8B92A8")
+    hl("SlProblem", ui.fg1, "#CC1166")
     hl("SlProblemText", "#CC1166", "#2C000A")
-    hl("SlVisual", ui.gray_050, "#A130B7")
-    hl("SlSelect", ui.gray_050, "#A678BD")
-    hl("SlInsert", ui.gray_050, "#B5800B")
-    hl("SlReplace", ui.gray_050, "#D5685B")
-    hl("SlCommand", ui.gray_050, "#199817")
-    hl("SlTerminal", ui.gray_050, "#199817")
+    hl("SlVisual", ui.fg1, "#A130B7")
+    hl("SlSelect", ui.fg1, "#A678BD")
+    hl("SlInsert", ui.fg1, "#B5800B")
+    hl("SlReplace", ui.fg1, "#D5685B")
+    hl("SlCommand", ui.fg1, "#199817")
+    hl("SlTerminal", ui.fg1, "#199817")
 
     -- Diagnostics
-    hl("DiagnosticError", util.error, _)
-    hl("DiagnosticWarn", util.warning, _)
-    hl("DiagnosticInfo", util.info, _)
-    hl("DiagnosticHint", util.hint, _)
-    hl("DiagnosticOk", util.success, _)
+    hl("DiagnosticError", ui.error, _)
+    hl("DiagnosticWarn", ui.warning, _)
+    hl("DiagnosticInfo", ui.info, _)
+    hl("DiagnosticHint", ui.hint, _)
+    hl("DiagnosticOk", ui.success, _)
 
     -- Git
-    hl("diffLine", util.debug, _)
-    hl("diffSubname", ui.gray_050, _)
-    hl("DiffAdd", _, util.add_950)
-    hl("DiffChange", _, util.change_950)
-    hl("DiffDelete", _, util.remove_950)
-    hl("DiffText", _, util.change_850)
-    hl("Added", util.add_300, _)
-    hl("Changed", util.change_300, _)
-    hl("Removed", util.remove_300, _)
+    hl("diffLine", ui.debug, _)
+    hl("diffSubname", ui.fg1, _)
+    hl("DiffAdd", _, ui.add_darkest)
+    hl("DiffChange", _, ui.change_darkest)
+    hl("DiffDelete", _, ui.remove_darkest)
+    hl("DiffText", _, ui.change_dark)
+    hl("Added", ui.add_light, _)
+    hl("Changed", ui.change_light, _)
+    hl("Removed", ui.remove_light, _)
 
     -- Cmp
-    hl("SnippetTabstop", _, ui.blue_800, I)
-    hl("SnippyPlaceholder", _, ui.blue_900, I)
-    hl("CmpItemAbbr", ui.gray_050, _)
-    hl("CmpItemAbbrDeprecated", ui.gray_500, _, S)
-    hl("CmpItemAbbrMatch", util.info, _, B)
-    hl("CmpItemAbbrMatchFuzzy", util.info_100, _)
+    hl("SnippetTabstop", _, ui.sel1, "italic")
+    hl("SnippyPlaceholder", _, ui.sel2, "italic")
+    hl("CmpItemAbbr", ui.fg1, _)
+    hl("CmpItemAbbrDeprecated", ui.fg_disabled, _, "strikethrough")
+    hl("CmpItemAbbrMatch", ui.info, _, "bold")
+    hl("CmpItemAbbrMatchFuzzy", ui.info_light, _)
     hl("CmpItemKindClass", syn.type_2, _)
     hl("CmpItemKindColor", syn.number, _)
     hl("CmpItemKindConstant", syn.number, _)
     hl("CmpItemKindConstructor", syn.special, _)
     hl("CmpItemKindEnum", syn.number, _)
     hl("CmpItemKindEnumMember", syn.number, _)
-    hl("CmpItemKindEvent", ui.cyan_dark, _)
+    hl("CmpItemKindEvent", syn.special, _)
     hl("CmpItemKindField", syn.property, _)
     hl("CmpItemKindFile", syn.symbol, _)
-    hl("CmpItemKindFolder", ui.blue_folder, _)
+    hl("CmpItemKindFolder", ui.title, _)
     hl("CmpItemKindFunction", syn.procedure, _)
     hl("CmpItemKindInterface", syn.type_1, _)
     hl("CmpItemKindKeyword", syn.keyword, _)
@@ -239,27 +222,27 @@ function M.setup(hl_delegate, link_delegate)
     hl("CmpItemKindOperator", syn.keyword, _)
     hl("CmpItemKindProperty", syn.property, _)
     hl("CmpItemKindReference", syn.special, _)
-    hl("CmpItemKindSnippet", ui.yellow_light, _)
+    hl("CmpItemKindSnippet", ui.match_dim, _)
     hl("CmpItemKindStruct", syn.type_1, _)
     hl("CmpItemKindText", syn.string, _)
     hl("CmpItemKindTypeParameter", syn.symbol, _)
-    hl("CmpItemKindUnit", ui.cyan_dark, _)
+    hl("CmpItemKindUnit", syn.special, _)
     hl("CmpItemKindValue", syn.number, _)
     hl("CmpItemKindVariable", syn.symbol, _)
 
     -- LSP
-    hl("LspReferenceRead", _, ui.blue_900)
-    hl("LspReferenceText", _, ui.blue_900)
-    hl("LspReferenceWrite", _, ui.blue_900)
-    hl("LspInlayHint", ui.gray_300, _)
-    hl("LspCodeLens", ui.gray_300, _, I)
-    hl("LspCodeLensSeparator", ui.gray_300, _, I)
-    hl("LspSignatureActiveParameter", util.info, _)
+    hl("LspReferenceRead", _, ui.sel2)
+    hl("LspReferenceText", _, ui.sel2)
+    hl("LspReferenceWrite", _, ui.sel2)
+    hl("LspInlayHint", ui.fg3, _)
+    hl("LspCodeLens", ui.fg3, _, "italic")
+    hl("LspCodeLensSeparator", ui.fg3, _, "italic")
+    hl("LspSignatureActiveParameter", ui.info, _)
 
     -- Telescope
-    hl("TelescopeSelection", util.hint, _)
-    hl("TelescopeMatching", util.info, _, B)
-    hl("TelescopeBorder", ui.blue_folder, ui.gray_900)
+    hl("TelescopeSelection", ui.hint, _)
+    hl("TelescopeMatching", ui.info, _, "bold")
+    hl("TelescopeBorder", ui.title, ui.bg2)
 
     -- Syntax
     hl("Keyword", syn.keyword, _)
@@ -287,38 +270,38 @@ function M.setup(hl_delegate, link_delegate)
     hl("Define", syn.macro, _)
     hl("Macro", syn.macro, _)
     hl("PreCondit", syn.macro, _)
-    hl("Statement", util.debug, _)
+    hl("Statement", ui.debug, _)
     hl("Special", syn.special, _)
     hl("Tag", syn.mark_tag, _)
     hl("Delimiter", syn.punctuation, _)
-    hl("Comment", syn.comment, _, I)
+    hl("Comment", syn.comment, _, "italic")
     hl("SpecialComment", syn.docstring, _)
-    hl("Whitespace", util.error, _) -- only unwanted whitespaces are shown
-    hl("Underlined", _, _, U)
-    hl("Bold", _, _, B)
-    hl("Italic", _, _, I)
-    hl("Ignore", ui.gray_500, _, S)
-    hl("Todo", ui.green_pure, _, B)
-    hl("Error", util.error, _, B)
-    hl("Debug", util.debug, _)
+    hl("Whitespace", ui.error, _) -- only unwanted whitespaces are shown
+    hl("Underlined", _, _, "underline")
+    hl("Bold", _, _, "bold")
+    hl("Italic", _, _, "italic")
+    hl("Ignore", ui.fg_disabled, _, "strikethrough")
+    hl("Todo", ui.cursor, _, "bold")
+    hl("Error", ui.error, _, "bold")
+    hl("Debug", ui.debug, _)
 
     -- HTML
-    hl("htmlTitle", syn.mark_header_1, _, B)
-    hl("htmlH1", syn.mark_header_1, _, B)
-    hl("htmlH2", syn.mark_header_2, _, B)
-    hl("htmlH3", syn.mark_header_3, _, B)
-    hl("htmlH4", syn.mark_header_4, _, B)
+    hl("htmlTitle", syn.mark_header_1, _, "bold")
+    hl("htmlH1", syn.mark_header_1, _, "bold")
+    hl("htmlH2", syn.mark_header_2, _, "bold")
+    hl("htmlH3", syn.mark_header_3, _, "bold")
+    hl("htmlH4", syn.mark_header_4, _, "bold")
     hl("htmlTag", syn.punctuation, _)
     link("htmlEndTag", "htmlTag")
     hl("htmlTagName", syn.mark_tag, _)
     hl("htmlArg", syn.property, _)
-    hl("htmlLink", syn.mark_emphase, _, U)
+    hl("htmlLink", syn.mark_emphase, _, "underline")
     hl("htmlSpecialChar", syn.number, _)
 
     -- Markdown
 
-    hl("markdownBold", syn.mark_strong, _, B)
-    hl("markdownBoldDelimiter", syn.punctuation, _, B)
+    hl("markdownBold", syn.mark_strong, _, "bold")
+    hl("markdownBoldDelimiter", syn.punctuation, _, "bold")
 
     -- vimscript
     hl("vimNotFunc", syn.keyword, _)
@@ -330,13 +313,13 @@ function M.setup(hl_delegate, link_delegate)
     hl("vimFunction", syn.procedure, _)
 
     -- Syntax (Treesitter)
-    hl("@annotation", ui.blue_folder, _)
-    hl("@attribute", syn.property, _, B, I)
+    hl("@annotation", ui.title, _)
+    hl("@attribute", syn.property, _, "bold", "italic")
     hl("@comment.docstring", syn.docstring, _)
     hl("@constant", syn.symbol, _) -- Why did I use symbol here? (2024-08-05)
     hl("@constant.builtin", syn.number, _)
-    hl("@emphasis", _, _, I)
-    hl("@error", util.error, _)
+    hl("@emphasis", _, _, "italic")
+    hl("@error", ui.error, _)
     link("@function.macro", "Macro")
     hl("@field", syn.property, _)
     hl("@keyword.function", syn.special, _)
@@ -346,44 +329,44 @@ function M.setup(hl_delegate, link_delegate)
     hl("@punctuation.bracket", syn.punctuation, _)
     hl("@punctuation.delimiter", syn.punctuation, _)
     hl("@punctuation.special", syn.punctuation, _)
-    hl("@query.linter.error", util.warning, _)
+    hl("@query.linter.error", ui.warning, _)
     hl("@string.regex", syn.regex, _)
     hl("@string.documentation", syn.docstring, _)
-    hl("@strong", ui.blue_folder, _, B)
+    hl("@strong", ui.title, _, "bold")
     hl("@symbol", syn.symbol, _)
     hl("@tag.attribute", syn.property, _)
     hl("@tag.delimiter", syn.punctuation, _)
     hl("@text", syn.string, _)
-    hl("@type.builtin", syn.type_2, _, B, I)
+    hl("@type.builtin", syn.type_2, _, "bold", "italic")
     link("@variable", "Variable")
     hl("@variable.builtin", syn.special, _)
     hl("@constant.git_rebase", syn.type_1, _)
     hl("@spell.markdown", syn.symbol, _)
-    hl("@markup.heading.1.markdown", syn.mark_header_1, _, B)
-    hl("@markup.heading.2.markdown", syn.mark_header_2, _, B)
-    hl("@markup.heading.3.markdown", syn.mark_header_3, _, B)
-    hl("@markup.heading.4.markdown", syn.mark_header_4, _, B)
-    hl("@markup.raw.block.markdown", syn.mark_quote, _, B)
+    hl("@markup.heading.1.markdown", syn.mark_header_1, _, "bold")
+    hl("@markup.heading.2.markdown", syn.mark_header_2, _, "bold")
+    hl("@markup.heading.3.markdown", syn.mark_header_3, _, "bold")
+    hl("@markup.heading.4.markdown", syn.mark_header_4, _, "bold")
+    hl("@markup.raw.block.markdown", syn.mark_quote, _, "bold")
     hl("@markup.list.markdown", syn.mark_quote, _)
-    hl("@markup.strong.markdown_inline", syn.mark_strong, _, B)
-    hl("@markup.italic.markdown_inline", syn.mark_emphase, _, I)
-    hl("@markup.link.url.markdown_inline", syn.mark_raw, _, U)
-    hl("@markup.link.label.markdown_inline", syn.mark_quote, _, U)
-    hl("@text.title.1.marker", syn.mark_header_1, _, B)
-    hl("@text.title.2.marker", syn.mark_header_2, _, B)
-    hl("@text.title.3.marker", syn.mark_header_3, _, B)
-    hl("@text.title.4.marker", syn.mark_header_4, _, B)
-    hl("@text.title.1", syn.mark_header_1, _, B)
-    hl("@text.title.2", syn.mark_header_2, _, B)
-    hl("@text.title.3", syn.mark_header_3, _, B)
-    hl("@text.title.4", syn.mark_header_4, _, B)
-    hl("@text.bold", syn.mark_strong, _, B)
-    hl("@text.italic", syn.mark_emphase, _, I)
+    hl("@markup.strong.markdown_inline", syn.mark_strong, _, "bold")
+    hl("@markup.italic.markdown_inline", syn.mark_emphase, _, "italic")
+    hl("@markup.link.url.markdown_inline", syn.mark_raw, _, "underline")
+    hl("@markup.link.label.markdown_inline", syn.mark_quote, _, "underline")
+    hl("@text.title.1.marker", syn.mark_header_1, _, "bold")
+    hl("@text.title.2.marker", syn.mark_header_2, _, "bold")
+    hl("@text.title.3.marker", syn.mark_header_3, _, "bold")
+    hl("@text.title.4.marker", syn.mark_header_4, _, "bold")
+    hl("@text.title.1", syn.mark_header_1, _, "bold")
+    hl("@text.title.2", syn.mark_header_2, _, "bold")
+    hl("@text.title.3", syn.mark_header_3, _, "bold")
+    hl("@text.title.4", syn.mark_header_4, _, "bold")
+    hl("@text.bold", syn.mark_strong, _, "bold")
+    hl("@text.italic", syn.mark_emphase, _, "italic")
 
     -- Syntax (LSP)
     hl("@lsp.type.selfKeyword", syn.special, _)
-    hl("@lsp.type.selfTypeKeyword", syn.special, _, B, I)
-    hl("@lsp.type.builtinType", syn.type_2, _, B, I)
+    hl("@lsp.type.selfTypeKeyword", syn.special, _, "bold", "italic")
+    hl("@lsp.type.builtinType", syn.type_2, _, "bold", "italic")
     hl("@lsp.type.builtinAttribute", syn.special, _)
     -- hl("@lsp.type.typeParameter", syn.special, _)
     -- hl("@lsp.type.generic", syn.special, _)
@@ -392,11 +375,11 @@ function M.setup(hl_delegate, link_delegate)
     hl("@lsp.type.derive", syn.mark_emphase, _)
     link("@lsp.type.macro", "Macro")
     -- link("@lsp.type.enum", "@namespace")
-    hl("@lsp.type.enum", syn.namespace, _, B, I)
-    hl("@lsp.type.enumMember", syn.number, _, B, I)
-    hl("@lsp.type.interface", syn.type_1, _, I)
-    hl("@lsp.type.typeAlias", syn.type_2, _, I)
-    hl("@lsp.type.lifetime", syn.special, _, I)
+    hl("@lsp.type.enum", syn.namespace, _, "bold", "italic")
+    hl("@lsp.type.enumMember", syn.number, _, "bold", "italic")
+    hl("@lsp.type.interface", syn.type_1, _, "italic")
+    hl("@lsp.type.typeAlias", syn.type_2, _, "italic")
+    hl("@lsp.type.lifetime", syn.special, _, "italic")
     hl("@character.special", syn.special, _)
 end
 
@@ -441,7 +424,7 @@ function M.generate_colorscheme(filepath)
     end
 
     f:write(colorscheme_header:format(M.name, M.background))
-    M.setup(gen_hi, gen_link)
+    M.configure(gen_hi, gen_link)
     f:flush()
     f:close()
 end
