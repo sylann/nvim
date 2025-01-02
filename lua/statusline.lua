@@ -1,22 +1,93 @@
 local _, devicons = pcall(require, "nvim-web-devicons")
 
--- stylua: ignore start
-vim.api.nvim_set_hl(0, "Statusline",     { fg = "#585F74", bg = nil       })
-vim.api.nvim_set_hl(0, "SlAlt",          { fg = "#D4D4D4", bg = "#282f34" })
-vim.api.nvim_set_hl(0, "SlNormal",       { fg = "#000000", bg = "#46A6C2" })
-vim.api.nvim_set_hl(0, "SlProtected",    { fg = "#000000", bg = "#FFFFFF" })
-vim.api.nvim_set_hl(0, "SlModified",     { fg = "#000000", bg = "#DD6633" })
-vim.api.nvim_set_hl(0, "SlModifiedText", { fg = "#FF6633", bg = nil       })
-vim.api.nvim_set_hl(0, "SlReadonly",     { fg = "#000000", bg = "#8B92A8" })
-vim.api.nvim_set_hl(0, "SlProblem",      { fg = "#FFFFFF", bg = "#CC1166" })
-vim.api.nvim_set_hl(0, "SlProblemText",  { fg = "#CC1166", bg = nil       })
-vim.api.nvim_set_hl(0, "SlVisual",       { fg = "#000000", bg = "#B180D7" })
-vim.api.nvim_set_hl(0, "SlSelect",       { fg = "#000000", bg = "#B668CD" })
-vim.api.nvim_set_hl(0, "SlInsert",       { fg = "#000000", bg = "#D5B06B" })
-vim.api.nvim_set_hl(0, "SlReplace",      { fg = "#000000", bg = "#D5786B" })
-vim.api.nvim_set_hl(0, "SlCommand",      { fg = "#000000", bg = "#49C837" })
-vim.api.nvim_set_hl(0, "SlTerminal",     { fg = "#000000", bg = "#49C837" })
--- stylua: ignore end
+---@class SlOptions
+---@field hl? string name of a highlight group
+---@field pl? string left padding
+---@field pr? string right padding
+
+---@class SlItem : SlOptions
+---@field text string actual content of the item
+
+local cached = {}
+---Create a new highlight group by reusing the foreground color of the
+---existing group highlight fgname and the background color of bgname.
+---The name of the new highlight group is <fgname>And<bgname>.
+---@param fgname string
+---@param bgname string
+---@return string
+local function combine_hl(fgname, bgname)
+    local name = fgname .. "And" .. bgname
+    if not cached[name] then
+        local fg = vim.api.nvim_get_hl(0, { name = fgname })
+        local bg = vim.api.nvim_get_hl(0, { name = bgname })
+        vim.api.nvim_set_hl(0, name, { fg = fg.fg, bg = bg.bg })
+        cached[name] = true
+    end
+    return name
+end
+
+---Set hl on items that don't already have one and
+---set pl of first item and pr of last item.
+---@param opt SlOptions
+---@param content string | SlItem | SlItem[]
+---@return SlItem[]
+local function sl_block(opt, content)
+    local items ---@type SlItem[]
+    if type(content) == "string" then
+        items = { { text = content } }
+    elseif content.text then
+        items = { content }
+    else
+        items = content
+    end
+    if #items > 0 then
+        items[1].pl = opt.pl
+        items[#items].pr = opt.pr
+    end
+    if opt.hl then
+        for _, item in ipairs(items) do
+            if not item.hl then
+                item.hl = opt.hl
+            elseif item.hl ~= opt.hl then
+                item.hl = combine_hl(item.hl, opt.hl) -- use item fg color and block bg color
+            end
+        end
+    end
+    return items
+end
+
+---@param blocks SlItem[][]
+---@return string
+local function sl_render_blocks(blocks)
+    local hl = nil
+    local chunks = {}
+    for _, items in ipairs(blocks) do
+        for _, item in ipairs(items) do
+            if item.text and item.text ~= "" then
+                if item.hl then
+                    if not hl then
+                        hl = item.hl
+                        table.insert(chunks, "%#" .. hl .. "#") -- start hl
+                    elseif hl ~= item.hl then
+                        hl = item.hl
+                        table.insert(chunks, "%*") -- end previous hl
+                        table.insert(chunks, "%#" .. hl .. "#") -- start hl
+                    else
+                        -- otherwise continue with current hl
+                    end
+                end
+
+                if item.pl then table.insert(chunks, item.pl) end
+                table.insert(chunks, item.text)
+                if item.pr then table.insert(chunks, item.pr) end
+            end
+        end
+    end
+    if hl then
+        table.insert(chunks, "%*") -- end previous hl
+    end
+    return table.concat(chunks)
+end
 
 -- stylua: ignore
 local modes = {
@@ -89,61 +160,43 @@ vim.api.nvim_create_autocmd({ "User" }, {
 })
 
 local function sl_branch()
-    local head = vim.b.gitsigns_head
-    if not head or head == "" then return "" end
-    local a, b = GitAheadBehind.ahead, GitAheadBehind.behind
-    local ab = ""
-    if a > 0 then ab = ab .. " ↑" .. a end
-    if b > 0 then ab = ab .. " ↓" .. b end
-    if #head > 25 then head = head:sub(1, 22) .. "…" end
-    return " " .. head .. ab
+    local items = {} ---@type SlItem[]
+    local head, a, b = vim.b.gitsigns_head, GitAheadBehind.ahead, GitAheadBehind.behind
+    if head and head ~= "" then
+        if #head > 25 then head = head:sub(1, 22) .. "…" end
+        table.insert(items, { text = "" })
+        table.insert(items, { text = head, pl = " " })
+        if a > 0 then table.insert(items, { text = "↑" .. a, pl = " " }) end
+        if b > 0 then table.insert(items, { text = "↓" .. b, pl = " " }) end
+    end
+    return items
 end
 
----@param diags vim.Diagnostic[]
----@return string
-local function get_sl_diagnostics(diags)
-    local counts = { ERROR = 0, WARN = 0, INFO = 0, HINT = 0 }
-    for _, diag in ipairs(diags) do
-        local k = vim.diagnostic.severity[diag.severity]
-        counts[k] = counts[k] + 1
+local diagHls = { "DiagnosticError", "DiagnosticWarn", "DiagnosticInfo", "DiagnosticHint" }
+local diagIcons = { "", "", "", "" }
+
+local function sl_diagnostics()
+    local items = {} ---@type SlItem[]
+    for severity, count in pairs(vim.diagnostic.count()) do
+        local hl, icon = diagHls[severity], diagIcons[severity]
+        table.insert(items, { hl = hl, text = icon, pl = " " })
+        table.insert(items, { hl = hl, text = count, pl = " " })
     end
-    local s = ""
-    if counts.ERROR > 0 then s = s .. " %#DiagnosticError# " .. counts.ERROR end
-    if counts.WARN > 0 then s = s .. " %#DiagnosticWarn# " .. counts.WARN end
-    if counts.INFO > 0 then s = s .. " %#DiagnosticInfo# " .. counts.INFO end
-    if counts.HINT > 0 then s = s .. " %#DiagnosticHint# " .. counts.HINT end
-    if s == "" then return "" end
-    return s:sub(2) .. "%*"
+    return items
 end
 
-local sl_diagnostics = ""
-
-vim.api.nvim_create_autocmd('DiagnosticChanged', {
-    callback = function (args)
-        if vim.bo.filetype == "lazy" then return end -- Skip diagnostics of LazyNvim
-
-        sl_diagnostics = get_sl_diagnostics(args.data.diagnostics)
-        vim.cmd("redrawstatus")
-    end
-})
-
--- NOTE: The intent is to indicate which filetype is detected. The filename is irrelevant.
 local function sl_filetype()
+    local items = {} ---@type SlItem[]
     local ft = vim.bo.filetype
-    if not devicons then return ft end
-
-    local icon, hl = devicons.get_icon_by_filetype(ft)
-    if not icon then return ft end
-
-    return "%#" .. hl .. "#" .. icon .. "%* " .. ft
+    if devicons then
+        local icon, iconhl = devicons.get_icon_by_filetype(ft)
+        if icon then table.insert(items, { text = icon, hl = iconhl, pr = " " }) end
+    end
+    table.insert(items, { text = ft })
+    return items
 end
 
-local function sl_encoding()
-    local encoding = vim.opt.fileencoding:get()
-    if encoding == "" then return "" end
-    return encoding
-end
-
+---@return string
 local function sl_fileformat()
     local f = vim.bo.fileformat
     if f == "unix" then return "LF" end
@@ -152,6 +205,7 @@ local function sl_fileformat()
     return f .. "??"
 end
 
+---@return string
 local function format_size(size)
     local units = { "", "K", "M", "G" }
     local i = 1
@@ -159,39 +213,34 @@ local function format_size(size)
         size = size / 1024
         i = i + 1
     end
-
     local fmt = i == 1 and "%d%s" or "%.1f%s"
     return fmt:format(size, units[i])
 end
 
+---@return string
 local function sl_filesize()
     local file = vim.fn.expand("%:p")
     local size = file and #file > 0 and vim.fn.getfsize(file) or 0
     return " " .. format_size(size)
 end
 
-local function Block(hl, items)
-    local out = table.concat(NonBlanks(items), " ")
-    if out ~= "" then
-        out = " " .. out .. " "
-        if hl ~= "" then out = "%#" .. hl .. "#" .. out .. "%*" end
-    end
-    return out
-end
-
 function DrawMyStatusline()
     local mode = get_mode_data()
-    vim.cmd("hi link SlPrime " .. mode.hl)
-    vim.cmd("hi link SlPrimeText " .. (mode.hl2 or "Statusline"))
-
-    return table.concat({
-        Block("SlPrime", { mode.name }),
-        Block("SlAlt", { sl_branch() }),
-        Block("SlPrimeText", { "%{expand('%:~:.')}%( %h%w%q%)" }),
-        "%=",
-        Block("", { sl_diagnostics, sl_filetype(), sl_encoding(), sl_fileformat() }),
-        Block("SlAlt", { sl_filesize(), " %L" }),
-        Block("SlPrime", { "%l:%v" }),
+    local hl_ = "Statusline"
+    local alt = "SlAlt"
+    local hl1 = mode.hl
+    local hl2 = mode.hl2
+    return sl_render_blocks({
+        sl_block({ pl = " ", pr = " ", hl = hl1 }, mode.name),
+        sl_block({ pl = " ", pr = " ", hl = hl2 or hl_ }, "%{expand('%:~:.')}:%l:%v%( %h%w%q%)"),
+        sl_block({ pl = " ", pr = " ", hl = alt }, sl_diagnostics()),
+        sl_block({ pl = nil, pr = nil, hl = hl_ }, "%="),
+        sl_block({ pl = " ", pr = " ", hl = hl_ }, vim.opt.fileencoding:get()),
+        sl_block({ pl = nil, pr = " ", hl = hl_ }, sl_fileformat()),
+        sl_block({ pl = nil, pr = " ", hl = hl_ }, sl_filetype()),
+        sl_block({ pl = " ", pr = " ", hl = alt }, sl_filesize()),
+        sl_block({ pl = nil, pr = " ", hl = alt }, " %L"),
+        sl_block({ pl = " ", pr = " ", hl = hl1 }, sl_branch()),
     })
 end
 
