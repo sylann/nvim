@@ -44,8 +44,8 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
 vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     pattern = "theme.lua",
     callback = function(args)
-        local theme = dofile(args.file)
-        if vim.g.colors_name == theme.name then
+        local _, theme = pcall(dofile, args.file)
+        if theme and vim.g.colors_name == theme.name then
             theme.setup()
             theme.generate_colorscheme()
         end
