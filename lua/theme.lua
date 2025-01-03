@@ -1,80 +1,90 @@
 local M = {}
 
 M.name = "sylfire"
-M.background = "dark"
+
+---Use a black background
+local dark = 1
+---Variation of Dark with some colors being more saturated
+local darkest = 2
+---Use a white background
+local light = 3
+
+M.modes = { dark, darkest, light }
+M.mode = dark
+M.background = M.mode == light and "light" or "dark"
+
 M.colors = {}
 
-
 M.colors.ui = {
-    bg1 = "#0B0B0B",
-    bg2 = "#121212",
-    bg3 = "#1B1B1B",
-    bg4 = "#2D2D2D",
-    fg1 = "#D4D4D4",
-    fg2 = "#ABB2BF",
-    fg3 = "#8B92A8",
-    fg_dim = "#6B737F",
-    fg_disabled = "#545862",
-    sel1 = "#083c5a",
-    sel2 = "#042e48",
-    sel3 = "#022036",
-    title = "#519FDF",
-    search = "#3E4451",
-    match = "#D8B43C",
-    match_dim = "#D5B06B",
-    cursor = "#00FF00",
-    error = "#F44747",
-    error_light = "#F28686",
-    warning = "#FF8800",
-    warning_light = "#FAAF5E",
-    info = "#FFCC66",
-    info_light = "#F2D996",
-    hint = "#66C9FF",
-    hint_light = "#A6D7F2",
-    success = "#14C50B",
-    success_light = "#AAF2A6",
-    debug = "#B267E6",
-    remove_darkest = "#420000",
-    remove_dark = "#720000",
-    remove = "#B4151B",
-    remove_light = "#E74E3A",
-    add_darkest = "#004200",
-    add_dark = "#007200",
-    add = "#58BC0C",
-    add_light = "#7ED258",
-    change_darkest = "#212100",
-    change_dark = "#514100",
-    change = "#CCA700",
-    change_light = "#EBCB75",
+    bg1            = ({ "#0B0B0B", "#0B0B0B", "#F4F4F4" })[M.mode],
+    bg2            = ({ "#121212", "#121212", "#EDEDED" })[M.mode],
+    bg3            = ({ "#1B1B1B", "#1B1B1B", "#E4E4E4" })[M.mode],
+    bg4            = ({ "#2D2D2D", "#2D2D2D", "#D2D2D2" })[M.mode],
+    fg1            = ({ "#D4D4D4", "#D4D4D4", "#000000" })[M.mode],
+    fg2            = ({ "#ABB2BF", "#ABB2BF", "#343D30" })[M.mode],
+    fg3            = ({ "#8B92A8", "#8B92A8", "#646D67" })[M.mode],
+    fg_dim         = ({ "#6B737F", "#6B737F", "#A4ACA0" })[M.mode],
+    fg_disabled    = ({ "#545862", "#545862", "#BDBDBD" })[M.mode],
+    sel1           = ({ "#083c5a", "#083c5a", "#BEDEFE" })[M.mode],
+    sel2           = ({ "#042e48", "#042e48", "#A0D0EE" })[M.mode],
+    sel3           = ({ "#022036", "#022036", "#90C1DE" })[M.mode],
+    title          = ({ "#519FDF", "#519FDF", "#519FDF" })[M.mode],
+    search         = ({ "#3E4451", "#3E4451", "#AFBFEE" })[M.mode],
+    match          = ({ "#D8B43C", "#D8B43C", "#D8B43C" })[M.mode],
+    match_dim      = ({ "#D5B06B", "#D5B06B", "#D5B06B" })[M.mode],
+    cursor         = ({ "#00FF00", "#00FF00", "#00FF00" })[M.mode],
+    error          = ({ "#F44747", "#F44747", "#F44747" })[M.mode],
+    error_light    = ({ "#F28686", "#F28686", "#F28686" })[M.mode],
+    warning        = ({ "#FF8800", "#FF8800", "#FF8800" })[M.mode],
+    warning_light  = ({ "#FAAF5E", "#FAAF5E", "#FAAF5E" })[M.mode],
+    info           = ({ "#FFCC66", "#FFCC66", "#FFCC66" })[M.mode],
+    info_light     = ({ "#F2D996", "#F2D996", "#F2D996" })[M.mode],
+    hint           = ({ "#66C9FF", "#66C9FF", "#66C9FF" })[M.mode],
+    hint_light     = ({ "#A6D7F2", "#A6D7F2", "#A6D7F2" })[M.mode],
+    success        = ({ "#14C50B", "#14C50B", "#14C50B" })[M.mode],
+    success_light  = ({ "#AAF2A6", "#AAF2A6", "#AAF2A6" })[M.mode],
+    debug          = ({ "#B267E6", "#B267E6", "#B267E6" })[M.mode],
+    remove_darkest = ({ "#420000", "#420000", "#420000" })[M.mode],
+    remove_dark    = ({ "#720000", "#720000", "#720000" })[M.mode],
+    remove         = ({ "#B4151B", "#B4151B", "#B4151B" })[M.mode],
+    remove_light   = ({ "#E74E3A", "#E74E3A", "#E74E3A" })[M.mode],
+    add_darkest    = ({ "#004200", "#004200", "#004200" })[M.mode],
+    add_dark       = ({ "#007200", "#007200", "#007200" })[M.mode],
+    add            = ({ "#58BC0C", "#58BC0C", "#58BC0C" })[M.mode],
+    add_light      = ({ "#7ED258", "#7ED258", "#7ED258" })[M.mode],
+    change_darkest = ({ "#212100", "#212100", "#212100" })[M.mode],
+    change_dark    = ({ "#514100", "#514100", "#514100" })[M.mode],
+    change         = ({ "#CCA700", "#CCA700", "#CCA700" })[M.mode],
+    change_light   = ({ "#EBCB75", "#EBCB75", "#EBCB75" })[M.mode],
 }
 
 M.colors.syn = {
-    keyword = "#D14F3E",
-    special = "#7BACB6",
-    procedure = "#E0873C",
-    macro = "#9F6DA2",
-    type_1 = "#CDAC63",
-    type_2 = "#DDB150",
-    number = "#B37986",
-    string = "#CE9178",
-    bytes = "#EDD49D",
-    regex = "#E79474",
-    property = "#D7C7A4",
-    namespace = "#B2AA93",
-    symbol = "#D9D3C1",
-    punctuation = "#757473",
-    comment = "#7F775A",
-    docstring = "#799857",
-    mark_header_1 = "#D7F447",
-    mark_header_2 = "#77CE57",
-    mark_header_3 = "#3BC4A6",
-    mark_header_4 = "#4CBCDF",
-    mark_strong = "#EDD49D",
-    mark_emphase = "#D7C7A4",
-    mark_raw = "#CE9178",
-    mark_quote = "#6796E6",
-    mark_tag = "#569CD6",
-    mark_tag_bad = "#A09030",
+    keyword       = ({ "#D14F3E", "#FF3311", "#BB1111" })[M.mode],
+    special       = ({ "#7BACB6", "#66BBCC", "#1177BB" })[M.mode],
+    procedure     = ({ "#E0873C", "#FF7711", "#775500" })[M.mode],
+    macro         = ({ "#9F6DA2", "#9966BB", "#7755CC" })[M.mode],
+    type_1        = ({ "#CDAC63", "#F0B030", "#CC9900" })[M.mode],
+    type_2        = ({ "#DDB150", "#FFB010", "#CC9900" })[M.mode],
+    number        = ({ "#B37986", "#CC6699", "#AA2299" })[M.mode],
+    string        = ({ "#CE9178", "#EE9977", "#AA5544" })[M.mode],
+    bytes         = ({ "#EDD49D", "#EDD49D", "#AA5544" })[M.mode],
+    regex         = ({ "#E79474", "#FF8866", "#AA5544" })[M.mode],
+    property      = ({ "#D7C7A4", "#D7C7A4", "#000000" })[M.mode],
+    namespace     = ({ "#B2AA93", "#B2AA93", "#000000" })[M.mode],
+    symbol        = ({ "#D9D3C1", "#D9D3C1", "#000000" })[M.mode],
+    punctuation   = ({ "#757473", "#757473", "#7F6A69" })[M.mode],
+    comment       = ({ "#7F775A", "#7F775A", "#7F6A69" })[M.mode],
+    docstring     = ({ "#799857", "#799857", "#499847" })[M.mode],
+    mark_header_1 = ({ "#B7D407", "#B7D407", "#B7D407" })[M.mode],
+    mark_header_2 = ({ "#67BE57", "#67BE57", "#67BE57" })[M.mode],
+    mark_header_3 = ({ "#3BC4A6", "#3BC4A6", "#3BC4A6" })[M.mode],
+    mark_header_4 = ({ "#4CBCDF", "#4CBCDF", "#4CBCDF" })[M.mode],
+    mark_strong   = ({ "#EDD49D", "#EDD49D", "#BB7F3F" })[M.mode],
+    mark_emphase  = ({ "#D7C7A4", "#D7C7A4", "#7F775A" })[M.mode],
+    mark_raw      = ({ "#CE9178", "#CE9178", "#EE9977" })[M.mode],
+    mark_quote    = ({ "#6796E6", "#6796E6", "#6796E6" })[M.mode],
+    mark_tag      = ({ "#569CD6", "#569CD6", "#569CD6" })[M.mode],
+    mark_tag_bad  = ({ "#A09030", "#A09030", "#A09030" })[M.mode],
 }
 
 ---@alias Attr "bold" | "italic" | "strikethrough" | "underline" | "undercurl" | "underdouble" | "underdotted" | "underdashed"
@@ -136,7 +146,7 @@ function M.configure(hl, link)
     hl("MsgArea", ui.fg1, _)
     hl("MsgSeparator", ui.fg1, _)
     hl("NonText", ui.fg_dim, _)
-    hl("Normal", ui.fg1, _)
+    hl("Normal", ui.fg1, ui.bg1)
     hl("NormalFloat", _, ui.sel3)
     link("NormalNC", "Normal")
     hl("Pmenu", ui.fg1, ui.bg3)
