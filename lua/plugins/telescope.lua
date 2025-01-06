@@ -96,6 +96,7 @@ return {
         pcall(telescope.load_extension, "fzf")
         pcall(telescope.load_extension, "ui-select")
         pcall(telescope.load_extension, "git_file_history")
+
         local dropdown = themes.get_dropdown({
             previewer = false,
             layout_config = {
@@ -103,10 +104,11 @@ return {
                 height = 30,
             },
         })
+        local sortbyline = { tiebreak = function() return false end }
 
         -- INFO: Keymaps
         local map = Mapper({})
-        map("n", "<leader><leader>", "Find Telescope builtins", function() return builtin.builtin({ include_extensions = true }) end)
+        map("n", "<leader><leader>", "Find Telescope builtins", Custom(builtin.builtin, { include_extensions = true }))
         map("n", "<leader>fr", "Resume last Telescope find results", builtin.resume)
         map("n", "<leader>hh", "Find Help", builtin.help_tags)
         map("n", "<leader>bb", "Find buffers", builtin.buffers)
@@ -116,13 +118,17 @@ return {
         map("n", "<leader>ft", "Find files tracked by git", builtin.git_files)
         map("n", "<leader>fh", "Find current file's git revisions", telescope.extensions.git_file_history.git_file_history)
         map("n", "<leader>ff", "Find filtered files in current workspace", builtin.find_files)
-        local find_files_no_ignore = function() builtin.find_files({ find_command = { "rg", "--files", "--hidden", "--no-ignore" } }) end
-        map("n", "<leader>f<S-F>", "Find all files in current workspace", find_files_no_ignore)
-        map("n", "<leader>fn", "Find files in My Neovim Config", function() builtin.find_files({ cwd = vim.fn.stdpath("config") }) end)
-        map("n", "<leader>fp", "Find files in Neovim installed plugins", function() builtin.find_files({ cwd = vim.fn.stdpath("data") }) end)
+        map(
+            "n",
+            "<leader>f<S-F>",
+            "Find all files in current workspace",
+            Custom(builtin.find_files, { find_command = { "rg", "--files", "--hidden", "--no-ignore" } })
+        )
+        map("n", "<leader>fn", "Find files in My Neovim Config", Custom(builtin.find_files, { cwd = vim.fn.stdpath("config") }))
+        map("n", "<leader>fp", "Find files in Neovim installed plugins", Custom(builtin.find_files, { cwd = vim.fn.stdpath("data") }))
         map("n", "<leader>fl", "Find (Live Grep) in current workspace", builtin.live_grep)
-        map("n", "<leader>fo", "Find (Live Grep) in opened buffers", function() builtin.live_grep({ grep_open_files = true }) end)
-        map("n", "<leader>/", "Find in current buffer", function() builtin.current_buffer_fuzzy_find(dropdown) end)
+        map("n", "<leader>fo", "Find (Live Grep) in opened buffers", Custom(builtin.live_grep, { grep_open_files = true }))
+        map("n", "<leader>/", "Find in current buffer", Custom(builtin.current_buffer_fuzzy_find, dropdown, sortbyline))
         map("n", "<leader>fv", "Find word under cursor in current workspace", function()
             vim.cmd.normal([["vyiw]])
             builtin.live_grep({ default_text = vim.fn.getreg("v") })
@@ -135,7 +141,7 @@ return {
             local sanitized = vim.fn.escape(selection, "/{}[]^$+*."):gsub("\n", "\\n")
             builtin.live_grep({ default_text = sanitized })
         end)
-        map("i", "<C-L>j", "List Emoji options", function() builtin.symbols({ unpack(dropdown), sources = { "emoji" } }) end)
-        map("i", "<C-L>g", "List Gitmoji options", function() builtin.symbols({ unpack(dropdown), sources = { "gitmoji" } }) end)
+        map("i", "<C-L>j", "List Emoji options", Custom(builtin.symbols, { sources = { "emoji" } }))
+        map("i", "<C-L>g", "List Gitmoji options", Custom(builtin.symbols, { sources = { "gitmoji" } }))
     end,
 }

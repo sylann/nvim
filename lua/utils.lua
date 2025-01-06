@@ -16,6 +16,39 @@ table.copy = function(source)
     return out
 end
 
+---The given value is a table and does not look like an array (v[1] is nil)
+---@param v unknown
+---@return boolean
+table.isdict = function(v)
+    return type(v) == "table" and v[1] == nil
+end
+
+---The given value is a table and looks like an array (v[1] is not nil)
+---@param v unknown
+---@return boolean
+table.isarray = function(v)
+    return type(v) == "table" and v[1] ~= nil
+end
+
+---Merge given tables into a single new one.
+---Already existing keys are overriden by default.
+---Tables are merged reccursively but only if they don't look like arrays (no 1-index).
+---@param ... table
+---@return table
+table.merge = function(...)
+    local out = {}
+    for _, t in ipairs({ ... }) do
+        for k, v in pairs(t) do
+            if table.isdict(v) and table.isdict(out[k]) then
+                out[k] = table.merge(out[k], v)
+            else
+                out[k] = v
+            end
+        end
+    end
+    return out
+end
+
 ---Remove elements from `tabl` if they verify the `must_be_removed` predicate.
 ---The table is modified in place.
 ---@generic T
@@ -52,10 +85,17 @@ end
 --- @return function
 function Mapper(baseopts)
     return function(mode, keys, desc, command)
-        local opts = { desc = desc }
-        for k, v in pairs(baseopts) do
-            opts[k] = v
-        end
+        local opts = table.merge({ desc = desc }, baseopts)
         vim.keymap.set(mode, keys, command, opts)
     end
+end
+
+---Create a new function that calls the given f with the given options.
+---If multiple option tables are given, they are merged in a single table.
+---@param f function
+---@param ... table
+---@return function
+function Custom(f, ...)
+    local fo = table.merge(...)
+    return function() f(fo) end
 end
