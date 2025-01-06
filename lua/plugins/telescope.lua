@@ -36,6 +36,7 @@ return {
                     },
                 },
                 sorting_strategy = "ascending",
+                tiebreak = function() return false end, -- force stable ordering when score is equal
                 mappings = {
                     n = {
                         ["@"] = actions_layout.cycle_layout_next,
