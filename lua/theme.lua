@@ -17,6 +17,7 @@ M.colors.ui = {
     fg_disabled = "#545862",
     sel1 = "#083c5a",
     sel2 = "#042e48",
+    sel3 = "#022036",
     title = "#519FDF",
     search = "#3E4451",
     match = "#D8B43C",
@@ -116,12 +117,14 @@ function M.configure(hl, link)
     hl("Conceal", ui.fg_disabled, _)
     link("CurSearch", "Search")
     hl("Cursor", _, ui.cursor)
-    hl("CursorLine", _, ui.bg2)
-    hl("CursorLineNr", ui.fg1, ui.bg2)
+    hl("CursorLine", _, ui.bg3)
+    hl("CursorLineNr", ui.fg1, ui.bg3)
     hl("Directory", ui.title, _)
     hl("EndOfBuffer", ui.title, _)
     hl("ErrorMsg", ui.error, _, "bold")
-    hl("FloatBorder", ui.bg3, ui.bg2)
+    hl("FloatBorder", ui.title, ui.sel3)
+    link("FloatFooter", "FloatBorder")
+    link("FloatTitle", "FloatBorder")
     hl("FoldColumn", ui.fg_disabled, ui.bg3)
     hl("Folded", ui.fg_disabled, ui.bg3)
     hl("IncSearch", _, ui.fg_disabled)
@@ -134,7 +137,7 @@ function M.configure(hl, link)
     hl("MsgSeparator", ui.fg1, _)
     hl("NonText", ui.fg_dim, _)
     hl("Normal", ui.fg1, _)
-    hl("NormalFloat", _, ui.bg2)
+    hl("NormalFloat", _, ui.sel3)
     link("NormalNC", "Normal")
     hl("Pmenu", ui.fg1, ui.bg3)
     hl("PmenuSbar", _, ui.bg3)
@@ -241,8 +244,8 @@ function M.configure(hl, link)
 
     -- Telescope
     hl("TelescopeSelection", ui.hint, _)
-    hl("TelescopeMatching", ui.info, _, "bold")
-    hl("TelescopeBorder", ui.title, ui.bg2)
+    hl("TelescopeMatching", _, ui.search, "bold")
+    link("TelescopeBorder", "FloatBorder")
 
     -- Syntax
     hl("Keyword", syn.keyword, _)
