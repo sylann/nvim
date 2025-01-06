@@ -59,15 +59,3 @@ function Mapper(baseopts)
         vim.keymap.set(mode, keys, command, opts)
     end
 end
-
----Create a new array where all blank strings are removed.
----A string is considered blank if it empty or only contains whitespaces.
----@param items string[]
----@return string[]
-function NonBlanks(items)
-    local parts = {}
-    for _, item in ipairs(items) do
-        if item:find("%S") then table.insert(parts, item) end
-    end
-    return parts
-end
