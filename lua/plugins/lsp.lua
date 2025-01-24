@@ -1,3 +1,13 @@
+local custom_lsp_definitions = function()
+    -- WTF is this customization API?
+    local entry_display = require("telescope.pickers.entry_display")
+    local displayer = entry_display.create({ items = { { remaining = true } } })
+    local display = function(entry) return displayer({ CleanFilename(entry.filename) .. ":" .. entry.lnum }) end
+    require("telescope.builtin").lsp_definitions({
+        entry_index = { display = function() return display, true end }
+    })
+end
+
 return {
     -- LSP Configuration & Plugins
     "neovim/nvim-lspconfig",
@@ -26,7 +36,7 @@ return {
                 -- See `:help vim.lsp.*` for documentation on any of the below functions
                 map("n", "K", "[LSP] Show symbol description on hover", vim.lsp.buf.hover)
                 map("i", "<C-x>", "[LSP] Show current function's signature", vim.lsp.buf.signature_help)
-                map("n", "gd", "[LSP] Go to definition", tesc.lsp_definitions)
+                map("n", "gd", "[LSP] Go to definition", custom_lsp_definitions)
                 map("n", "gD", "[LSP] Go to declaration", vim.lsp.buf.declaration)
                 map("n", "gr", "[LSP] Go to references", tesc.lsp_references)
                 map("n", "gt", "[LSP] Go to type definition", tesc.lsp_type_definitions)

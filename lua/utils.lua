@@ -99,3 +99,30 @@ function Custom(f, ...)
     local fo = table.merge(...)
     return function() f(fo) end
 end
+
+local static_paths = {
+    ["@state"] = vim.fn.expand("~") .. "/.local/state/nvim",
+    ["@lazy"] = vim.fn.expand("~") .. "/.local/share/nvim/lazy",
+    ["@data"] = vim.fn.expand("~") .. "/.local/share/nvim",
+    ["@cache"] = vim.fn.expand("~") .. "/.cache/nvim",
+    ["@config"] = vim.fn.expand("~") .. "/.config/nvim",
+    ["@runlua"] = "/usr/share/nvim/runtime/lua",
+}
+local cached_clean = {}
+function CleanFilename(filename)
+    local cached = cached_clean[filename]
+    print(string.format("CleanFilename: %s => %s", filename, cached))
+    if cached then return cached end
+    local cwd = vim.fn.getcwd() .. "/"
+    local cleaned = string.gsub(filename, cwd, "", 1)
+    if cleaned ~= filename then goto done end
+
+    for name, path in pairs(static_paths) do
+        cleaned = string.gsub(filename, path, name, 1)
+        if cleaned ~= filename then goto done end
+    end
+
+    ::done::
+    cached_clean[filename] = cleaned
+    return cleaned
+end
