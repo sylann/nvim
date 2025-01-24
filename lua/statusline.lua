@@ -232,14 +232,14 @@ function DrawMyStatusline()
     local hl2 = mode.hl2
     return sl_render_blocks({
         sl_block({ pl = " ", pr = " ", hl = hl1 }, mode.name),
-        sl_block({ pl = " ", pr = " ", hl = hl2 or hl_ }, "%{expand('%:~:.')}:%l:%v%( %h%w%q%)"),
+        sl_block({ pl = " ", pr = " ", hl = hl2 or hl_ }, "%{expand('%:~:.')}%( %h%w%q%)"),
         sl_block({ pl = " ", pr = " ", hl = alt }, sl_diagnostics()),
         sl_block({ pl = nil, pr = nil, hl = hl_ }, "%="),
         sl_block({ pl = " ", pr = " ", hl = hl_ }, vim.opt.fileencoding:get()),
         sl_block({ pl = nil, pr = " ", hl = hl_ }, sl_fileformat()),
         sl_block({ pl = nil, pr = " ", hl = hl_ }, sl_filetype()),
         sl_block({ pl = " ", pr = " ", hl = alt }, sl_filesize()),
-        sl_block({ pl = nil, pr = " ", hl = alt }, " %L"),
+        sl_block({ pl = nil, pr = " ", hl = alt }, " %l/%L :%v"),
         sl_block({ pl = " ", pr = " ", hl = hl1 }, sl_branch()),
     })
 end
