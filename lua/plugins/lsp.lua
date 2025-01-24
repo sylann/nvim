@@ -86,7 +86,8 @@ return {
         local servers = {
             clangd = {},
             gopls = {},
-            pyright = {},
+            -- pyright = {},
+            ruff = {},
             rust_analyzer = {},
             -- INFO: possible alternative: https://github.com/pmizio/typescript-tools.nvim
             ts_ls = {
