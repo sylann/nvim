@@ -23,10 +23,6 @@ vim.keymap.set("x", "<S-J>", ":m '>+1<CR>gv=gv", { desc = "Move current selectio
 vim.keymap.set("n", "<C-K>", ":cprev<CR>zz", { desc = "Move to previous Quickfix" })
 vim.keymap.set("n", "<C-J>", ":cnext<CR>zz", { desc = "Move to next Quickfix" })
 
-vim.keymap.set("v", "<leader>!", ":'<,'>y v | vert new | put=system('', @v)<Left><Left><Left><Left><Left><Left>", {
-    desc = "Pipe selection to external program (the command following 'pipeto') and redirect output of the command to a new window to the right"
-})
-
 local function browse_at(host)
     return function() vim.ui.open(host .. vim.fn.expand("<cfile>")) end
 end
