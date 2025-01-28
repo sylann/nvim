@@ -13,7 +13,6 @@ return {
         -- Add debug adapter language plugins below to auto install them.
         -- debug adapters themselves can be installed with Mason for example.
         "leoluz/nvim-dap-go",
-        "mfussenegger/nvim-dap-python",
         { "mrcjkb/rustaceanvim", version = "^5", lazy = false },
     },
 
@@ -23,13 +22,12 @@ return {
 
         local function toggle_breakpoint_cond() dap.set_breakpoint(vim.fn.input("Breakpoint condition: ")) end
         return {
-            -- Basic debugging keymaps, feel free to change to your liking!
             { "<C-n>m", dap.continue, desc = "Debug: Start/Continue" },
             { "<C-n>l", dap.step_over, desc = "Debug: Step Over" },
             { "<C-n>j", dap.step_into, desc = "Debug: Step Into" },
             { "<C-n>k", dap.step_out, desc = "Debug: Step Out" },
             { "<C-n>b", dap.toggle_breakpoint, desc = "Debug: Toggle Breakpoint" },
-            { "<C-n>c", toggle_breakpoint_cond, desc = "Debug: Set Breakpoint condition" },
+            { "<C-n>B", toggle_breakpoint_cond, desc = "Debug: Set Breakpoint condition" },
             { "<C-n>n", dapui.toggle, desc = "Debug: Toggle user interface" },
             unpack(keys),
         }
@@ -47,7 +45,6 @@ return {
 
             ensure_installed = {
                 "delve",
-                "python",
                 "js",
                 "firefox",
                 "stylua",
