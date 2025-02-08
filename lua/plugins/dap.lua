@@ -13,7 +13,6 @@ return {
         -- Add debug adapter language plugins below to auto install them.
         -- debug adapters themselves can be installed with Mason for example.
         "leoluz/nvim-dap-go",
-        { "mrcjkb/rustaceanvim", version = "^5", lazy = false },
         "mfussenegger/nvim-dap-python",
     },
 
