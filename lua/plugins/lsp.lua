@@ -111,7 +111,6 @@ return {
             --     },
             -- },
             ruff = {},
-            rust_analyzer = {},
             -- INFO: possible alternative: https://github.com/pmizio/typescript-tools.nvim
             ts_ls = {
                 init_options = {
