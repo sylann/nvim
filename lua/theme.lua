@@ -11,6 +11,7 @@ local light = 3
 
 M.modes = { dark, darkest, light }
 M.mode = dark
+M.background = M.mode == light and "light" or "dark"
 
 M.colors = {}
 
@@ -113,7 +114,7 @@ end
 ---@param hl HlHandler
 ---@param link LinkHandler
 function M.configure(hl, link)
-    vim.o.background = M.mode == light and "light" or "dark"
+    vim.o.background = M.background
     vim.o.termguicolors = true
     vim.g.colors_name = M.name
 
