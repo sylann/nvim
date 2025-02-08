@@ -4,7 +4,7 @@ local custom_lsp_definitions = function()
     local displayer = entry_display.create({ items = { { remaining = true } } })
     local display = function(entry) return displayer({ CleanFilename(entry.filename) .. ":" .. entry.lnum }) end
     require("telescope.builtin").lsp_definitions({
-        entry_index = { display = function() return display, true end }
+        entry_index = { display = function() return display, true end },
     })
 end
 
@@ -96,7 +96,20 @@ return {
         local servers = {
             clangd = {},
             gopls = {},
-            -- pyright = {},
+            -- pyright = {
+            --     settings = {
+            --         pyright = {
+            --             -- Using Ruff's import organizer
+            --             disableOrganizeImports = true,
+            --         },
+            --         python = {
+            --             analysis = {
+            --                 -- Ignore all files for analysis to exclusively use Ruff for linting
+            --                 ignore = { "*" },
+            --             },
+            --         },
+            --     },
+            -- },
             ruff = {},
             rust_analyzer = {},
             -- INFO: possible alternative: https://github.com/pmizio/typescript-tools.nvim
