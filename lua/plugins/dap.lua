@@ -14,6 +14,7 @@ return {
         -- debug adapters themselves can be installed with Mason for example.
         "leoluz/nvim-dap-go",
         { "mrcjkb/rustaceanvim", version = "^5", lazy = false },
+        "mfussenegger/nvim-dap-python",
     },
 
     keys = function(_, keys)
@@ -45,6 +46,7 @@ return {
 
             ensure_installed = {
                 "delve",
+                "python",
                 "js",
                 "firefox",
                 "stylua",
@@ -60,5 +62,16 @@ return {
         dap.listeners.before.event_exited["dapui_config"] = dapui.close
 
         require("dap-go").setup()
+
+        -- XXX: This depends on the project...
+        require("dap-python").setup("uv")
+        table.insert(dap.configurations.python, {
+            name = "Python Debugger: Module",
+            type = "debugpy",
+            request = "launch",
+            module = "debug.distinct_on",
+            justMyCode = false,
+            redirectOutput = true,
+        })
     end,
 }
