@@ -65,13 +65,38 @@ return {
 
         -- XXX: This depends on the project...
         require("dap-python").setup("uv")
-        table.insert(dap.configurations.python, {
-            name = "Python Debugger: Module",
-            type = "debugpy",
-            request = "launch",
-            module = "debug.distinct_on",
-            justMyCode = false,
-            redirectOutput = true,
-        })
+        dap.configurations.python = {
+            {
+                name = "DebugPy: Current File",
+                type = "debugpy",
+                request = "launch",
+                program = "${file}",
+                console = "integratedTerminal",
+                justMyCode = false,
+            },
+            {
+                name = "DebugPy: Module",
+                type = "debugpy",
+                request = "launch",
+                module = function ()
+                    return "scripts.doc"
+                    -- local rel_path = vim.fn.expand("%:.")
+                    -- local mod_path = string.gsub(rel_path, "/", ".")
+                    -- return mod_path
+                end,
+                console = "integratedTerminal",
+                justMyCode = false,
+                -- redirectOutput = true,
+            },
+            {
+                name = "DebugPy: Uvicorn",
+                type = "debugpy",
+                request = "launch",
+                module = "uvicorn",
+                args = { "app.main:api" },
+                console = "integratedTerminal",
+                justMyCode = false,
+            },
+        }
     end,
 }
