@@ -27,6 +27,17 @@ local function browse_at(host)
     return function() vim.ui.open(host .. vim.fn.expand("<cfile>")) end
 end
 vim.keymap.set("n", "gbg", browse_at("https://github.com/"), { desc = "Open filepath under cursor at github.com" })
+local function browse_file_as_html()
+    local filepath = "/tmp/vim-file-preview." .. vim.fn.expand("%:e")
+    vim.cmd.TOhtml(filepath)
+    vim.cmd.bdelete()
+    local cmd = string.format("!chpa '%s' url", filepath)
+    local output = vim.api.nvim_exec2(cmd, { output = true }).output
+    local lines = vim.split(output, "\n", { trimempty = true })
+    local url = lines[#lines]
+    vim.ui.open(url)
+end
+vim.keymap.set("n", "gbf", browse_file_as_html, { desc = "Open filepath under cursor at github.com" })
 
 vim.keymap.set("x", "<C-F>", ":fold<CR>", { desc = "Fold current selection" })
 vim.keymap.set("n", "<C-F>", "^<S-V>f{%:fold<CR>", { desc = "Fold curly bracket scope starting on current line" })
