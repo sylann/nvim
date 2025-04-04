@@ -46,13 +46,10 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     pattern = "theme.lua",
     callback = function(args)
         local _, theme = pcall(dofile, args.file)
-        if theme and vim.g.colors_name == theme.name then
-            theme.setup()
-            theme.generate_colorscheme()
-        end
+        if theme then theme.on_update() end
     end,
     group = sylann_augroup,
-    desc = "When theme.lua is modified, refresh styling if current colorscheme matches",
+    desc = "Run theme's update function when the file named theme.lua is modified",
 })
 
 vim.api.nvim_create_autocmd({ "BufWritePost" }, {

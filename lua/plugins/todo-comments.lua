@@ -7,17 +7,14 @@ return {
     event = "VimEnter",
 
     config = function()
-        local c = require("theme").colors
-
-        local safe = function(color) return color or error("missing color definition", 2) end
         require("todo-comments").setup({
             signs = true,
             keywords = {
-                FIX = { icon = " ", color = safe(c.ui.debug), alt = { "FIXME", "BUG" } },
-                HACK = { icon = " ", color = safe(c.ui.warning_light) },
-                WARN = { icon = " ", color = safe(c.ui.warning_light), alt = { "WARNING", "XXX" } },
-                NOTE = { icon = " ", color = safe(c.ui.hint_light), alt = { "HINT", "INFO" } },
-                TODO = { icon = " ", color = safe(c.ui.success_light) },
+                FIX = { icon = " ", color = "#B267E6", alt = { "FIXME", "BUG" } },
+                HACK = { icon = " ", color = "#FAAF5E",
+                WARN = { icon = " ", color = "#FAAF5E", alt = { "WARNING", "XXX" } },
+                NOTE = { icon = " ", color = "#A6D7F2", alt = { "HINT", "INFO" } },
+                TODO = { icon = " ", color = "#AAF2A6" },
                 PERF = nil,
                 TEST = nil,
             },

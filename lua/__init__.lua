@@ -1,4 +1,4 @@
-vim.cmd.colorscheme("sylfire") -- requires theme
+require("theme").init()
 require("utils")
 require("options")
 require("autocommands")

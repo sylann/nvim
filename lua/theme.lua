@@ -1,97 +1,54 @@
 local M = {}
 
-M.name = "sylfire"
+---Identifies the different possible highlight modes.
+---  name is used as a suffix for naming generated themes.
+---  background is used for configuring vim.o.background.
+---  index is the position in the static set of colors in the hard coded color palettes.
+---@alias Theme { name: string, background: "dark" | "light", index: integer }
 
----Use a black background
-local dark = 1
----Variation of Dark with some colors being more saturated
-local darkest = 2
----Use a white background
-local light = 3
-
-M.modes = { dark, darkest, light }
-M.mode = dark
-M.background = M.mode == light and "light" or "dark"
-
-M.colors = {}
-
-M.colors.ui = {
-    bg1            = ({ "#0B0B0B", "#0B0B0B", "#F4F4F4" })[M.mode],
-    bg2            = ({ "#121212", "#121212", "#EDEDED" })[M.mode],
-    bg3            = ({ "#1B1B1B", "#1B1B1B", "#E4E4E4" })[M.mode],
-    bg4            = ({ "#2D2D2D", "#2D2D2D", "#D2D2D2" })[M.mode],
-    fg1            = ({ "#D4D4D4", "#D4D4D4", "#000000" })[M.mode],
-    fg2            = ({ "#ABB2BF", "#ABB2BF", "#343D30" })[M.mode],
-    fg3            = ({ "#8B92A8", "#8B92A8", "#646D67" })[M.mode],
-    fg_dim         = ({ "#6B737F", "#6B737F", "#A4ACA0" })[M.mode],
-    fg_disabled    = ({ "#545862", "#545862", "#BDBDBD" })[M.mode],
-    sel1           = ({ "#083c5a", "#083c5a", "#BEDEFE" })[M.mode],
-    sel2           = ({ "#042e48", "#042e48", "#A0D0EE" })[M.mode],
-    sel3           = ({ "#022036", "#022036", "#90C1DE" })[M.mode],
-    title          = ({ "#519FDF", "#519FDF", "#519FDF" })[M.mode],
-    search         = ({ "#3E4451", "#3E4451", "#AFBFEE" })[M.mode],
-    match          = ({ "#D8B43C", "#D8B43C", "#D8B43C" })[M.mode],
-    match_dim      = ({ "#D5B06B", "#D5B06B", "#D5B06B" })[M.mode],
-    cursor         = ({ "#00FF00", "#00FF00", "#00FF00" })[M.mode],
-    error          = ({ "#F44747", "#F44747", "#F44747" })[M.mode],
-    error_light    = ({ "#F28686", "#F28686", "#F28686" })[M.mode],
-    warning        = ({ "#FF8800", "#FF8800", "#FF8800" })[M.mode],
-    warning_light  = ({ "#FAAF5E", "#FAAF5E", "#FAAF5E" })[M.mode],
-    info           = ({ "#FFCC66", "#FFCC66", "#FFCC66" })[M.mode],
-    info_light     = ({ "#F2D996", "#F2D996", "#F2D996" })[M.mode],
-    hint           = ({ "#66C9FF", "#66C9FF", "#66C9FF" })[M.mode],
-    hint_light     = ({ "#A6D7F2", "#A6D7F2", "#A6D7F2" })[M.mode],
-    success        = ({ "#14C50B", "#14C50B", "#14C50B" })[M.mode],
-    success_light  = ({ "#AAF2A6", "#AAF2A6", "#AAF2A6" })[M.mode],
-    debug          = ({ "#B267E6", "#B267E6", "#B267E6" })[M.mode],
-    remove_darkest = ({ "#420000", "#420000", "#420000" })[M.mode],
-    remove_dark    = ({ "#720000", "#720000", "#720000" })[M.mode],
-    remove         = ({ "#B4151B", "#B4151B", "#B4151B" })[M.mode],
-    remove_light   = ({ "#E74E3A", "#E74E3A", "#E74E3A" })[M.mode],
-    add_darkest    = ({ "#004200", "#004200", "#004200" })[M.mode],
-    add_dark       = ({ "#007200", "#007200", "#007200" })[M.mode],
-    add            = ({ "#58BC0C", "#58BC0C", "#58BC0C" })[M.mode],
-    add_light      = ({ "#7ED258", "#7ED258", "#7ED258" })[M.mode],
-    change_darkest = ({ "#212100", "#212100", "#212100" })[M.mode],
-    change_dark    = ({ "#514100", "#514100", "#514100" })[M.mode],
-    change         = ({ "#CCA700", "#CCA700", "#CCA700" })[M.mode],
-    change_light   = ({ "#EBCB75", "#EBCB75", "#EBCB75" })[M.mode],
+---@type Theme[]
+local themes = {
+    { name = "sylfire_dark", background = "dark", index = 1 },
+    { name = "sylfire_darksat", background = "dark", index = 2 },
+    { name = "sylfire_light", background = "light", index = 3 },
 }
-
-M.colors.syn = {
-    keyword       = ({ "#D14F3E", "#FF3311", "#BB1111" })[M.mode],
-    special       = ({ "#7BACB6", "#66BBCC", "#1177BB" })[M.mode],
-    procedure     = ({ "#E0873C", "#FF7711", "#775500" })[M.mode],
-    macro         = ({ "#9F6DA2", "#9966BB", "#7755CC" })[M.mode],
-    type_1        = ({ "#CDAC63", "#F0B030", "#CC9900" })[M.mode],
-    type_2        = ({ "#DDB150", "#FFB010", "#CC9900" })[M.mode],
-    number        = ({ "#B37986", "#CC6699", "#AA2299" })[M.mode],
-    string        = ({ "#CE9178", "#EE9977", "#AA5544" })[M.mode],
-    bytes         = ({ "#EDD49D", "#EDD49D", "#AA5544" })[M.mode],
-    regex         = ({ "#E79474", "#FF8866", "#AA5544" })[M.mode],
-    property      = ({ "#D7C7A4", "#D7C7A4", "#000000" })[M.mode],
-    namespace     = ({ "#B2AA93", "#B2AA93", "#000000" })[M.mode],
-    symbol        = ({ "#D9D3C1", "#D9D3C1", "#000000" })[M.mode],
-    punctuation   = ({ "#757473", "#757473", "#7F6A69" })[M.mode],
-    comment       = ({ "#7F775A", "#7F775A", "#7F6A69" })[M.mode],
-    docstring     = ({ "#799857", "#799857", "#499847" })[M.mode],
-    mark_header_1 = ({ "#B7D407", "#B7D407", "#B7D407" })[M.mode],
-    mark_header_2 = ({ "#67BE57", "#67BE57", "#67BE57" })[M.mode],
-    mark_header_3 = ({ "#3BC4A6", "#3BC4A6", "#3BC4A6" })[M.mode],
-    mark_header_4 = ({ "#4CBCDF", "#4CBCDF", "#4CBCDF" })[M.mode],
-    mark_strong   = ({ "#EDD49D", "#EDD49D", "#BB7F3F" })[M.mode],
-    mark_emphase  = ({ "#D7C7A4", "#D7C7A4", "#7F775A" })[M.mode],
-    mark_raw      = ({ "#CE9178", "#CE9178", "#EE9977" })[M.mode],
-    mark_quote    = ({ "#6796E6", "#6796E6", "#6796E6" })[M.mode],
-    mark_tag      = ({ "#569CD6", "#569CD6", "#569CD6" })[M.mode],
-    mark_tag_bad  = ({ "#A09030", "#A09030", "#A09030" })[M.mode],
-}
+M.default_theme = themes[1].name
 
 ---@alias Attr "bold" | "italic" | "strikethrough" | "underline" | "undercurl" | "underdouble" | "underdotted" | "underdashed"
 ---@alias HlHandler fun(name: string, fg: string, bg: string, ...: Attr)
 ---@alias LinkHandler fun(name: string, target_name: string)
 
-function M.setup()
+---Call this function at neovim startup
+function M.init()
+    -- TODO: generate_colorschemes if missing
+    vim.cmd.colorscheme(M.default_theme)
+end
+
+---Call this function when this file is updated
+function M.on_update()
+    M.generate_colorschemes()
+    M.setup_by_name(vim.g.colors_name)
+end
+
+---Write all colorscheme .vim files from palettes and definitions in this file.
+function M.generate_colorschemes()
+    for _, theme in ipairs(themes) do
+        M.write_colorscheme_vim(theme)
+        M.write_colorscheme_nvim(theme)
+    end
+end
+
+---Setup neovim's colorscheme with the theme corresponding to the given name, if one matches.
+---@param name string
+function M.setup_by_name(name)
+    for _, theme in ipairs(themes) do
+        if theme.name == name then M.setup(theme) end
+    end
+end
+
+---Setup neovim's colorscheme with the given theme
+---@param theme Theme
+function M.setup(theme)
     ---@type HlHandler
     local hl_handler = function(name, fg, bg, ...)
         local opts = { fg = fg, bg = bg }
@@ -107,20 +64,89 @@ function M.setup()
         vim.api.nvim_set_hl(0, link_name, opts)
     end
 
-    M.configure(hl_handler, link_handler)
+    vim.o.background = theme.background
+    M.configure(theme, hl_handler, link_handler)
 end
 
----Setup highlight groups for this theme
+---Set highlights for the given theme using given highlight functions.
+---@param theme Theme
 ---@param hl HlHandler
 ---@param link LinkHandler
-function M.configure(hl, link)
-    vim.o.background = M.background
-    vim.o.termguicolors = true
-    vim.g.colors_name = M.name
-
+function M.configure(theme, hl, link)
     local _ = "NONE"
-    local ui = M.colors.ui
-    local syn = M.colors.syn
+    -- stylua: ignore
+    local ui = {
+        bg1            = ({ "#0B0B0B", "#0B0B0B", "#F4F4F4" })[theme.index],
+        bg2            = ({ "#121212", "#121212", "#EDEDED" })[theme.index],
+        bg3            = ({ "#1B1B1B", "#1B1B1B", "#E4E4E4" })[theme.index],
+        bg4            = ({ "#2D2D2D", "#2D2D2D", "#D2D2D2" })[theme.index],
+        fg1            = ({ "#D4D4D4", "#D4D4D4", "#000000" })[theme.index],
+        fg2            = ({ "#ABB2BF", "#ABB2BF", "#343D30" })[theme.index],
+        fg3            = ({ "#8B92A8", "#8B92A8", "#646D67" })[theme.index],
+        fg_dim         = ({ "#6B737F", "#6B737F", "#A4ACA0" })[theme.index],
+        fg_disabled    = ({ "#545862", "#545862", "#BDBDBD" })[theme.index],
+        sel1           = ({ "#083c5a", "#083c5a", "#BEDEFE" })[theme.index],
+        sel2           = ({ "#042e48", "#042e48", "#A0D0EE" })[theme.index],
+        sel3           = ({ "#022036", "#022036", "#90C1DE" })[theme.index],
+        title          = ({ "#519FDF", "#519FDF", "#519FDF" })[theme.index],
+        search         = ({ "#3E4451", "#3E4451", "#AFBFEE" })[theme.index],
+        match          = ({ "#D8B43C", "#D8B43C", "#D8B43C" })[theme.index],
+        match_dim      = ({ "#D5B06B", "#D5B06B", "#D5B06B" })[theme.index],
+        cursor         = ({ "#00FF00", "#00FF00", "#00FF00" })[theme.index],
+        error          = ({ "#F44747", "#F44747", "#F44747" })[theme.index],
+        error_light    = ({ "#F28686", "#F28686", "#F28686" })[theme.index],
+        warning        = ({ "#FF8800", "#FF8800", "#FF8800" })[theme.index],
+        warning_light  = ({ "#FAAF5E", "#FAAF5E", "#FAAF5E" })[theme.index],
+        info           = ({ "#FFCC66", "#FFCC66", "#FFCC66" })[theme.index],
+        info_light     = ({ "#F2D996", "#F2D996", "#F2D996" })[theme.index],
+        hint           = ({ "#66C9FF", "#66C9FF", "#66C9FF" })[theme.index],
+        hint_light     = ({ "#A6D7F2", "#A6D7F2", "#A6D7F2" })[theme.index],
+        success        = ({ "#14C50B", "#14C50B", "#14C50B" })[theme.index],
+        success_light  = ({ "#AAF2A6", "#AAF2A6", "#AAF2A6" })[theme.index],
+        debug          = ({ "#B267E6", "#B267E6", "#B267E6" })[theme.index],
+        remove_darkest = ({ "#420000", "#420000", "#420000" })[theme.index],
+        remove_dark    = ({ "#720000", "#720000", "#720000" })[theme.index],
+        remove         = ({ "#B4151B", "#B4151B", "#B4151B" })[theme.index],
+        remove_light   = ({ "#E74E3A", "#E74E3A", "#E74E3A" })[theme.index],
+        add_darkest    = ({ "#004200", "#004200", "#004200" })[theme.index],
+        add_dark       = ({ "#007200", "#007200", "#007200" })[theme.index],
+        add            = ({ "#58BC0C", "#58BC0C", "#58BC0C" })[theme.index],
+        add_light      = ({ "#7ED258", "#7ED258", "#7ED258" })[theme.index],
+        change_darkest = ({ "#212100", "#212100", "#212100" })[theme.index],
+        change_dark    = ({ "#514100", "#514100", "#514100" })[theme.index],
+        change         = ({ "#CCA700", "#CCA700", "#CCA700" })[theme.index],
+        change_light   = ({ "#EBCB75", "#EBCB75", "#EBCB75" })[theme.index],
+    }
+
+    -- stylua: ignore
+    local syn = {
+        keyword       = ({ "#D14F3E", "#FF3311", "#BB1111" })[theme.index],
+        special       = ({ "#7BACB6", "#66BBCC", "#1177BB" })[theme.index],
+        procedure     = ({ "#E0873C", "#FF7711", "#775500" })[theme.index],
+        macro         = ({ "#9F6DA2", "#9966BB", "#7755CC" })[theme.index],
+        type_1        = ({ "#CDAC63", "#F0B030", "#CC9900" })[theme.index],
+        type_2        = ({ "#DDB150", "#FFB010", "#CC9900" })[theme.index],
+        number        = ({ "#B37986", "#CC6699", "#AA2299" })[theme.index],
+        string        = ({ "#CE9178", "#EE9977", "#AA5544" })[theme.index],
+        bytes         = ({ "#EDD49D", "#EDD49D", "#AA5544" })[theme.index],
+        regex         = ({ "#E79474", "#FF8866", "#AA5544" })[theme.index],
+        property      = ({ "#D7C7A4", "#D7C7A4", "#000000" })[theme.index],
+        namespace     = ({ "#B2AA93", "#B2AA93", "#000000" })[theme.index],
+        symbol        = ({ "#D9D3C1", "#D9D3C1", "#000000" })[theme.index],
+        punctuation   = ({ "#757473", "#757473", "#7F6A69" })[theme.index],
+        comment       = ({ "#7F775A", "#7F775A", "#7F6A69" })[theme.index],
+        docstring     = ({ "#799857", "#799857", "#499847" })[theme.index],
+        mark_header_1 = ({ "#B7D407", "#B7D407", "#B7D407" })[theme.index],
+        mark_header_2 = ({ "#67BE57", "#67BE57", "#67BE57" })[theme.index],
+        mark_header_3 = ({ "#3BC4A6", "#3BC4A6", "#3BC4A6" })[theme.index],
+        mark_header_4 = ({ "#4CBCDF", "#4CBCDF", "#4CBCDF" })[theme.index],
+        mark_strong   = ({ "#EDD49D", "#EDD49D", "#BB7F3F" })[theme.index],
+        mark_emphase  = ({ "#D7C7A4", "#D7C7A4", "#7F775A" })[theme.index],
+        mark_raw      = ({ "#CE9178", "#CE9178", "#EE9977" })[theme.index],
+        mark_quote    = ({ "#6796E6", "#6796E6", "#6796E6" })[theme.index],
+        mark_tag      = ({ "#569CD6", "#569CD6", "#569CD6" })[theme.index],
+        mark_tag_bad  = ({ "#A09030", "#A09030", "#A09030" })[theme.index],
+    }
 
     -- UI
     hl("ColorColumn", _, ui.bg3)
@@ -396,21 +422,42 @@ function M.configure(hl, link)
     hl("@character.special", syn.special, _)
 end
 
-local colorscheme_header = [[hi clear
+local colorscheme_nvim = [[
+let g:colors_name = "%s"
+lua require("theme").setup_by_name(vim.g.colors_name)
+]]
+
+---Generate a vim colorscheme file usable in neovim for the given theme.
+---@param theme Theme
+function M.write_colorscheme_nvim(theme)
+    local filepath = vim.fn.expand("~") .. "/.config/nvim/colors/" .. theme.name .. ".vim"
+    local f, err = io.open(filepath, "w")
+    if not f or err then
+        print("Error:", err or "Could not get file handle")
+        return
+    end
+
+    f:write(colorscheme_nvim:format(theme.name))
+    f:flush()
+    f:close()
+end
+
+local colorscheme_header_vim = [[
 if exists("syntax_on")
   syntax reset
 endif
-let g:colors_name = "%s"
 
 set background=%s
+hi clear
+let g:colors_name = "%s"
 
 ]]
-
----Generate a vim colorscheme file from the setup theme definitions
----@param filepath string?
-function M.generate_colorscheme(filepath)
+---Generate a vim colorscheme file usable in vim for the given theme.
+---@param theme Theme
+function M.write_colorscheme_vim(theme)
     local color = require("color")
-    filepath = filepath or vim.fn.expand("~") .. "/.config/vim/colors/" .. M.name .. ".vim"
+
+    local filepath = vim.fn.expand("~") .. "/.config/vim/colors/" .. theme.name .. ".vim"
 
     local f, err = io.open(filepath, "w")
     if not f or err then
@@ -436,8 +483,8 @@ function M.generate_colorscheme(filepath)
         f:write(fmt:format(name, target_name))
     end
 
-    f:write(colorscheme_header:format(M.name, M.background))
-    M.configure(gen_hi, gen_link)
+    f:write(colorscheme_header_vim:format(theme.background, theme.name))
+    M.configure(theme, gen_hi, gen_link)
     f:flush()
     f:close()
 end
