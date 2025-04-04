@@ -12,6 +12,8 @@ return {
 
         dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
 
+        enabled = false,
+
         config = function()
             require("render-markdown").setup({
                 bullet = { left_pad = 1 },
