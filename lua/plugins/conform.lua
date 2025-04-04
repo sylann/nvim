@@ -10,10 +10,12 @@ return {
             --stylua: ignore
             formatters_by_ft = {
                 lua        = { "stylua",       lsp_format = "never"    },
+                c          = { "clang-format", lsp_format = "never"    },
                 go         = { "gofmt",        lsp_format = "never"    },
                 rust       = { "rustfmt",      lsp_format = "never"    },
                 python     = { "ruff_format",  lsp_format = "never"    },
                 json       = { "prettier",     lsp_format = "never"    },
+                css        = { "prettier",     lsp_format = "never"    },
                 javascript = { "prettier",     lsp_format = "fallback" },
                 typescript = { "prettier",     lsp_format = "fallback" },
                 vue        = { "prettier",     lsp_format = "fallback" },
