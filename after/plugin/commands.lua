@@ -1,144 +1,284 @@
-local group = vim.api.nvim_create_augroup("MakeRunnerDump", { clear = true })
-local cmd_event = "BufWritePost"
-local prefix_pattern = "Pattern: "
-local prefix_command = "Execute: "
+local group = vim.api.nvim_create_augroup("RunnerDump", { clear = true })
 
----@param bufnr number
----@param pattern string
----@param command string
-local function write_header(bufnr, pattern, command)
-    local lines = {
-        string.format("On %s events in files matching <Pattern>, execute <Command>", cmd_event),
-    }
-    local i_vars = #lines -- 0-based index of next item, for use in nvim_buf_set_lines
-    table.insert(lines, prefix_pattern .. pattern)
-    table.insert(lines, prefix_command .. command)
-    table.insert(lines, "====================")
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, true, lines)
-    vim.api.nvim_buf_set_option(bufnr, "modified", false)
-    return i_vars, #lines
+--- UI
+
+---@param win integer
+---@param buf integer
+---@param split "left" | "right" | "above" | "below"
+---@return integer
+local function create_split_window(win, buf, split)
+    win = vim.api.nvim_open_win(buf, false, { win = win, split = split })
+    return win
 end
 
-local last_bufnr = nil
+---@param buf integer
+---@return integer
+local function create_floating_window(buf)
+    local width = math.min(60, math.floor(vim.o.columns * 0.6))
+    local height = math.min(16, math.floor(vim.o.lines * 0.9))
+    local win = vim.api.nvim_open_win(buf, true, {
+        relative = "win",
+        border = "rounded",
+        width = width,
+        height = height,
+        row = math.floor(((vim.o.lines - height) / 2) - 1),
+        col = math.floor((vim.o.columns - width) / 2),
+    })
+    vim.api.nvim_set_option_value("number", false, { win = win })
+    vim.api.nvim_set_option_value("relativenumber", false, { win = win })
+    return win
+end
 
----@param bufnr number
-local function restore_runner_dump(bufnr)
-    local in_a_window = vim.fn.bufwinid(bufnr) ~= -1
-    if not in_a_window then
-        vim.cmd.vertical()
-        vim.cmd.sbuffer(bufnr)
+--- close windows associated to given buffers (error on unsaved changes)
+local function close_windows(buffers)
+    local windows = vim.api.nvim_tabpage_list_wins(0)
+    local remaining = #windows
+    for _, w in ipairs(windows) do
+        if remaining == 1 then break end -- Can't close the last window
+        local b = vim.api.nvim_win_get_buf(w)
+        if vim.tbl_contains(buffers, b) then
+            vim.api.nvim_win_close(w, false)
+            remaining = remaining - 1
+        end
     end
 end
 
-local make_runner_dump = function()
-    if last_bufnr then return restore_runner_dump(last_bufnr) end
+--- Buffers
 
-    local buf_visible = true
-    local cur_pattern = vim.fn.expand("%:t") -- NOTE: must do this before opening new buffer
-    local cur_command = vim.fn.expand("%:p")
+---@param buf integer
+---@param lines string[]
+local function buf_write_lines(buf, lines)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+    vim.api.nvim_buf_set_option(buf, "modified", false)
+end
 
-    vim.cmd.vnew()
-    local dump_bufnr = vim.api.nvim_get_current_buf()
-    last_bufnr = dump_bufnr
+---@param buf integer
+---@param text string
+local function buf_write_text(buf, text)
+    local lines = vim.split(text, "\n", { trimempty = true })
+    buf_write_lines(buf, lines)
+end
 
-    local i_vars, i_dump = write_header(dump_bufnr, cur_pattern, cur_command)
+---@param buf integer
+---@param filetype string
+local function buf_set_filetype(buf, filetype)
+    if buf then print("changing filetype to", filetype) end
+    if buf then vim.api.nvim_set_option_value("filetype", filetype, { buf = buf }) end
+end
 
-    ---@type table<fun(ev: any), number>
-    local handles = {}
+---@alias BufferName "config" | "stdout" | "stderr"
 
-    ---@param cb fun(ev: any): string
-    local function unlisten_event(cb)
-        local existing = handles[cb]
-        if existing then vim.api.nvim_del_autocmd(existing) end
-    end
+---@type table<BufferName, number | nil>
+local m_buffers = { config = nil, stdout = nil, stderr = nil }
 
-    ---@param event string
-    ---@param bufnr_or_pattern string|number
-    ---@param cb fun(ev: any)
-    local function listen_event(event, bufnr_or_pattern, cb)
-        local t = type(bufnr_or_pattern)
-        local key = ({ number = "buffer", string = "pattern" })[t]
-        assert(key, "bufnr_or_pattern must be number or string. Got " .. t)
-        unlisten_event(cb)
-        handles[cb] = vim.api.nvim_create_autocmd(event, { group = group, [key] = bufnr_or_pattern, callback = cb })
-        -- print(string.format("LISTEN[%d]  %s  %s", handles[cb], event, bufnr or pattern))
-    end
-
-    local function clear_event_listeners()
-        for _, autocmd_id in pairs(handles) do
-            vim.api.nvim_del_autocmd(autocmd_id)
-        end
-    end
-
-    local function run_cmd_if_dump_visible()
-        -- print(string.format("@%s buf=%d visible=%s", cmd_event, dump_bufnr, buf_visible))
-        if not buf_visible then return end
-
-        vim.api.nvim_buf_set_lines(dump_bufnr, i_dump, -1, true, {})
-
-        local function make_write_dump(title)
-            return function(_, data)
-                assert(data, "data shouldn't be nil")
-                assert(#data > 0, "data should have at least 1 line")
-                vim.api.nvim_buf_set_lines(dump_bufnr, -1, -1, false, { title })
-                vim.api.nvim_buf_set_lines(dump_bufnr, -1, -1, false, data)
-                vim.api.nvim_buf_set_option(dump_bufnr, "modified", false)
-            end
-        end
-
-        -- print("  jobstart: " .. cur_command)
-        vim.fn.jobstart(cur_command, {
-            stdout_buffered = true, -- collect buffered stdout in one single event
-            stderr_buffered = true, -- collect buffered stderr in one single event
-            on_stdout = make_write_dump("STDOUT:"),
-            on_stderr = make_write_dump("STDERR:"),
+---@param name BufferName
+---@param filetype string
+---@return integer
+local function buf_create_scratch(name, filetype)
+    local buf = m_buffers[name]
+    if not buf then
+        -- only create the buffer once
+        buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_name(buf, "RunnerDump://" .. name)
+        vim.api.nvim_set_option_value("filetype", filetype, { buf = buf })
+        vim.api.nvim_create_autocmd("BufDelete", {
+            group = group,
+            buffer = buf,
+            once = true,
+            callback = function() m_buffers[name] = nil end,
         })
     end
-
-    ---@param pattern string
-    local function set_on_cmd_event(pattern)
-        if pattern ~= "" then
-            listen_event(cmd_event, pattern, run_cmd_if_dump_visible)
-        else
-            unlisten_event(run_cmd_if_dump_visible)
-        end
-    end
-    set_on_cmd_event(cur_pattern)
-
-    ---@param value string
-    local function update_pattern(value)
-        if cur_pattern == value then return end
-        print("cur_pattern =", value)
-        cur_pattern = value
-        set_on_cmd_event(cur_pattern)
-    end
-
-    ---@param value string
-    local function update_command(value)
-        if cur_command == value then return end
-        -- print("cur_command =", value)
-        cur_command = value
-    end
-
-    listen_event("BufLeave", dump_bufnr, function()
-        local var_lines = vim.api.nvim_buf_get_lines(dump_bufnr, i_vars, i_vars + 2, true)
-        assert(#var_lines == 2, "unexpected number of input lines")
-        update_pattern(string.sub(var_lines[1], #prefix_pattern + 1))
-        update_command(string.sub(var_lines[2], #prefix_command + 1))
-        vim.api.nvim_buf_set_option(dump_bufnr, "modified", false)
-    end)
-    listen_event("BufHidden", dump_bufnr, function() buf_visible = false end)
-    listen_event("BufWinEnter", dump_bufnr, function() buf_visible = true end)
-
-    vim.api.nvim_create_autocmd("BufDelete", {
-        group = group,
-        buffer = dump_bufnr,
-        once = true,
-        callback = clear_event_listeners,
-    })
+    m_buffers[name] = buf
+    return buf -- useful for where this is called, to not have to check for nil
 end
 
-local description = "Initialize a buffer in a vertical split to dump the output of a command"
+local function buf_delete_all()
+    for _, buf in pairs(m_buffers) do
+        if buf then vim.api.nvim_buf_delete(buf, { force = true }) end
+    end
+end
 
-vim.api.nvim_create_user_command("MakeRunnerDump", make_runner_dump, { desc = description })
-vim.keymap.set("n", "<C-w>w", make_runner_dump, { desc = description })
+--- Autocmds
+
+---@type table<string, integer | nil>
+local m_autocmds = {}
+
+local function autocmd_clear(key)
+    local existing = m_autocmds[key]
+    if existing then
+        m_autocmds[key] = nil
+        vim.api.nvim_del_autocmd(existing)
+    end
+end
+
+local function autocmd_clear_all()
+    for _, id in pairs(m_autocmds) do
+        vim.api.nvim_del_autocmd(id)
+    end
+end
+
+local function autocmd_on_pattern(event, pattern, callback)
+    local key = event .. "__" .. pattern
+    autocmd_clear(key)
+    m_autocmds[key] = vim.api.nvim_create_autocmd(event, { group = group, pattern = pattern, callback = callback })
+end
+
+local function autocmd_on_buffer(event, buffer, callback)
+    local key = event .. "__" .. buffer
+    autocmd_clear(key)
+    vim.api.nvim_create_autocmd(event, { group = group, buffer = buffer, callback = callback })
+end
+
+--- Config
+
+---Config variables for RunnerDump
+---@class (exact) CfgVariables
+---@field pattern string The pattern used by `vim.api.nvim_create_autocmd` — `test.sh`, `*.py`
+---@field command string The command used by `vim.system` — `./test.sh`, `python -m mod.script`, `gcc main.c -o a`
+---@field timeout_ms string Max execution time for command in milliseconds — `2000`, `200`
+---@field subshell string Whether to run `command` in a bash subshell — `true`, ...
+---@field out_filetype string Filetype stdout output — `python`, `c`,
+---@field err_filetype string Filetype stderr output — `log`, `python`, `text`
+
+---Callbacks to execute on change for some config variables
+---@class (exact) CfgBeforeUpdate
+---@field pattern? fun(new: string, old: string)>
+---@field out_filetype? fun(new: string, old: string)>
+---@field err_filetype? fun(new: string, old: string)>
+
+---@type CfgVariables | nil
+local m_cfg
+---@type CfgBeforeUpdate
+local m_cfg_before_update = {}
+
+local m_cfg_var_fmt = "%s = %s"
+local m_cfg_var_regex = "^(%w+) *= *(.*)"
+
+--- Command helpers
+
+local function update_config_from_buffer()
+    if not m_cfg then return vim.notify("update_config_from_buffer: cfg is not initialized", vim.log.levels.ERROR) end
+
+    local lines = vim.api.nvim_buf_get_lines(m_buffers.config, 0, -1, true)
+    local defs = {}
+    -- Each line starting with a word followed by an equal sign is a candidate for config updates
+    -- but they only take effect if the field actually exists.
+    for _, line in ipairs(lines) do
+        local key, value = string.match(line, m_cfg_var_regex)
+        if key then defs[key] = value end
+    end
+    for key, oldval in pairs(m_cfg) do
+        local newval = defs[key]
+        if newval and newval ~= oldval then
+            local cb = m_cfg_before_update[key]
+            if cb then cb(newval, oldval) end
+            m_cfg[key] = newval
+            print("cfg changed", key, newval)
+        end
+    end
+end
+
+local function write_command_output()
+    if not m_cfg then return vim.notify("write_command_output: cfg is not initialized", vim.log.levels.ERROR) end
+
+    if not m_buffers.stdout and not m_buffers.stderr then return end
+
+    -- TODO: write stdout and stderr from the process instead of from lua?
+    local cmd_args = m_cfg.subshell == "true" and { "bash", "-c", m_cfg.command } or vim.split(m_cfg.command, "%s+")
+    local timeout = tonumber(m_cfg.timeout_ms, 10)
+    local result = vim.system(cmd_args, { text = true, timeout = timeout }):wait()
+    if m_buffers.stdout then buf_write_text(m_buffers.stdout, result.stdout) end
+    if m_buffers.stderr then buf_write_text(m_buffers.stderr, result.stderr) end
+end
+
+local function guess_initial_command()
+    local path = vim.fn.expand("%")
+    local ext = vim.fn.expand("%:e")
+    local ft = vim.o.ft
+    if ext == "c" then return "gcc " .. path .. " -o a && { ./a; rm a; }" end
+    if ext == "go" then return "go run ." end
+    if ext == "py" then return "python " .. path end
+    if ext == "sh" or ft == "bash" then return "bash " .. path end
+    if ft == "sh" then return "sh " .. path end
+    return path
+end
+
+--- Plugin commands
+
+-- TODO: add layout options to cfg + store last cfg in shada, by filepath/file_id
+
+local function init_config()
+    if m_cfg then return end
+    m_cfg = {
+        pattern = vim.fn.expand("%:t"), -- NOTE: do this before opening any new buffer
+        command = guess_initial_command(), -- NOTE: do this before opening any new buffer
+        timeout_ms = "2000",
+        subshell = "false",
+        out_filetype = "text",
+        err_filetype = "text",
+    }
+    m_cfg_before_update = {
+        pattern = function(new) autocmd_on_pattern("BufWritePost", new, write_command_output) end,
+        out_filetype = function(new) buf_set_filetype(m_buffers.stdout, new) end,
+        err_filetype = function(new) buf_set_filetype(m_buffers.stderr, new) end,
+    }
+    autocmd_on_pattern("BufWritePost", m_cfg.pattern, write_command_output)
+end
+
+local function show_config()
+    if not m_cfg then return vim.notify("show_config: cfg is not initialized", vim.log.levels.ERROR) end
+
+    local buf = buf_create_scratch("config", "ini")
+    create_floating_window(buf)
+    buf_write_lines(m_buffers.config, {
+        "# Execute <command>, # On BufWritePost events,",
+        "# in files matching <pattern>.",
+        "# Set `subshell = true` to run <command> in a",
+        "# subshell (with 'bash -c \"<command>\"').",
+        "# ====================================================",
+        string.format(m_cfg_var_fmt, "pattern", m_cfg.pattern),
+        string.format(m_cfg_var_fmt, "command", m_cfg.command),
+        string.format(m_cfg_var_fmt, "timeout", m_cfg.timeout_ms),
+        string.format(m_cfg_var_fmt, "subshell", m_cfg.subshell),
+        string.format(m_cfg_var_fmt, "out_filetype", m_cfg.out_filetype),
+        string.format(m_cfg_var_fmt, "err_filetype", m_cfg.err_filetype),
+    })
+    autocmd_on_buffer("BufHidden", m_buffers.config, update_config_from_buffer)
+end
+
+---@param split_stdout "left" | "right" | "above" | "below"
+---@param split_stderr "left" | "right" | "above" | "below"
+local function show_dump_windows(split_stdout, split_stderr)
+    local stdout = buf_create_scratch("stdout", "text")
+    local stderr = buf_create_scratch("stderr", "text")
+    close_windows({ stdout, stderr }) -- reset layout cleanly
+    local win = 0
+    win = create_split_window(win, stdout, split_stdout) -- split relative to current window
+    win = create_split_window(win, stderr, split_stderr) -- split relative to stdout window
+end
+
+-- stylua: ignore start
+local function runner_dump_right_below() init_config() show_dump_windows("right", "below") show_config() end
+local function runner_dump_above_right() init_config() show_dump_windows("above", "right") show_config() end
+local function runner_dump_above_below() init_config() show_dump_windows("above", "below") show_config() end
+-- stylua: ignore end
+
+local function runner_clear()
+    autocmd_clear_all()
+    buf_delete_all()
+    m_cfg = nil
+    m_cfg_before_update = {}
+end
+
+local function runner_restart()
+    runner_clear()
+    init_config()
+    show_config()
+end
+
+vim.api.nvim_create_user_command("RunnerDumpRightBelow", runner_dump_right_below, {})
+vim.api.nvim_create_user_command("RunnerDumpAboveRight", runner_dump_above_right, {})
+vim.api.nvim_create_user_command("RunnerDumpAboveBelow", runner_dump_above_below, {})
+vim.api.nvim_create_user_command("RunnerDumpShowCfg", show_config, {})
+vim.api.nvim_create_user_command("RunnerDumpClear", runner_clear, {})
+vim.api.nvim_create_user_command("RunnerDumpRestart", runner_restart, {})
