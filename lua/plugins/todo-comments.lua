@@ -7,17 +7,28 @@ return {
     event = "VimEnter",
 
     config = function()
-        require("todo-comments").setup({
+        local todo = require("todo-comments")
+        todo.setup({
+            merge_keywords = false, -- prevent the lib from declaring its defaults
             signs = true,
             keywords = {
-                FIX = { icon = " ", color = "#B267E6", alt = { "FIXME", "BUG" } },
-                HACK = { icon = " ", color = "#FAAF5E",
-                WARN = { icon = " ", color = "#FAAF5E", alt = { "WARNING", "XXX" } },
-                NOTE = { icon = " ", color = "#A6D7F2", alt = { "HINT", "INFO" } },
-                TODO = { icon = " ", color = "#AAF2A6" },
-                PERF = nil,
-                TEST = nil,
+                TODO = { icon = " ", color = "todo" },
+                FIXME = { icon = " ", color = "fix", alt = { "FIX" } },
+                HACK = { icon = " ", color = "hack", alt = { "XXX" } },
+                WARN = { icon = " ", color = "warn", alt = { "WARNING" } },
+                INFO = { icon = " ", color = "info" },
+                HINT = { icon = " ", color = "hint", alt = { "NOTE" } },
+            },
+            colors = {
+                todo = { "CommentSuccess" },
+                fix = { "Debug" },
+                hack = { "#FF7744" },
+                warn = { "CommentWarning" },
+                info = { "CommentInfo" },
+                hint = { "CommentHint" },
             },
         })
+
+        vim.keymap.set("n", "<leader>ft", ":TodoTelescope<CR>", { desc = "Search todo-comments in the current workspace" })
     end,
 }
