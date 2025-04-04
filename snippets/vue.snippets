@@ -8,10 +8,10 @@ snippet vfor
 		${5:content}
 	</$4>$0
 
-snippet vslot
+snippet slotuse
 	<template #${1:name}></template>
 
-snippet slot
+snippet slotdef
 	<slot name="${1:name}"></slot>
 
 snippet com
@@ -71,3 +71,9 @@ snippet impcomponent
 
 snippet usestore
 	const ${2:n}Store = useStore${1:Name}()$0
+
+snippet selectvm
+	<select v-model="${1:vm}">
+	  <option :value="${5:zeroValue}">${6:Select an option}</option>
+	  <option v-for="opt in ${2:options}" :key="opt.id" :value="${3:opt.id}">{{ ${4:opt.label} }}</option>
+	</select>

@@ -45,7 +45,16 @@ snippet raise
 snippet retal
 	return window.alert("${1:context}(): ${2:problem}")
 
-snippet switch
+snippet retwar
+	return console.warn("${1:context}(): ${2:problem}")
+
+snippet switchreturn
+	switch (${1:variable}) {
+	  case ${2:value}: return ${3:// Do something}
+	  default: return ${4:// Do something}
+    }
+
+snippet switchbreak
 	switch (${1:variable}) {
 	  case ${2:value}:
 		${3:// Do something}
@@ -81,12 +90,6 @@ snippet forin
 	for (const ${1:key} of ${2:mapping}) {
 	  ${3:const val = $2[key]}
 	}$0
-
-snippet .map
-	.map((x) => ${1:x.})$0
-
-snippet .filter
-	.filter((x) => ${1:x.})$0
 
 snippet wait
 	await new Promise((resolve) => setTimeout(resolve, ${1:250}))
