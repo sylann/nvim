@@ -1,5 +1,13 @@
 local group = vim.api.nvim_create_augroup("RunnerDump", { clear = true })
 
+-- FIXME: why does it crash when restarting after a clear
+-- TODO: move the logic of RunnerDump in a dedicated file (extract some reusable logic elsewhere?)
+-- TODO: clear everything on closing the dump buffer (rollback)
+-- TODO: adjust name of commands so they're easier to type quickly
+-- TODO: remove shell = true, go back to a system of prefix, could also use the same trick as everyone: bash -c ... or see how git does aliases (git by default if valid git command)
+-- TODO: simplify interface (one line setup? use comma or something to delimit, get rid of dump file types, move everything in a single command with optional named params...)
+-- TODO: history of commands?
+
 --- UI
 
 ---@param win integer
@@ -66,10 +74,10 @@ local function buf_set_filetype(buf, filetype)
     if buf then vim.api.nvim_set_option_value("filetype", filetype, { buf = buf }) end
 end
 
----@alias BufferName "config" | "stdout" | "stderr"
+---@alias BufferName "config" | "stdout"
 
 ---@type table<BufferName, number | nil>
-local m_buffers = { config = nil, stdout = nil, stderr = nil }
+local m_buffers = { config = nil, stdout = nil }
 
 ---@param name BufferName
 ---@param filetype string
@@ -138,13 +146,11 @@ end
 ---@field timeout_ms string Max execution time for command in milliseconds — `2000`, `200`
 ---@field subshell string Whether to run `command` in a bash subshell — `true`, ...
 ---@field out_filetype string Filetype stdout output — `python`, `c`,
----@field err_filetype string Filetype stderr output — `log`, `python`, `text`
 
 ---Callbacks to execute on change for some config variables
 ---@class (exact) CfgBeforeUpdate
 ---@field pattern? fun(new: string, old: string)>
 ---@field out_filetype? fun(new: string, old: string)>
----@field err_filetype? fun(new: string, old: string)>
 
 ---@type CfgVariables | nil
 local m_cfg
@@ -181,14 +187,14 @@ end
 local function write_command_output()
     if not m_cfg then return vim.notify("write_command_output: cfg is not initialized", vim.log.levels.ERROR) end
 
-    if not m_buffers.stdout and not m_buffers.stderr then return end
+    if not m_buffers.stdout then return end
 
     -- TODO: write stdout and stderr from the process instead of from lua?
     local cmd_args = m_cfg.subshell == "true" and { "bash", "-c", m_cfg.command } or vim.split(m_cfg.command, "%s+")
     local timeout = tonumber(m_cfg.timeout_ms, 10)
     local result = vim.system(cmd_args, { text = true, timeout = timeout }):wait()
-    if m_buffers.stdout then buf_write_text(m_buffers.stdout, result.stdout) end
-    if m_buffers.stderr then buf_write_text(m_buffers.stderr, result.stderr) end
+    buf_write_text(m_buffers.stdout, result.stdout)
+    buf_write_text(m_buffers.stdout, result.stderr)
 end
 
 local function guess_initial_command()
@@ -215,12 +221,10 @@ local function init_config()
         timeout_ms = "2000",
         subshell = "false",
         out_filetype = "text",
-        err_filetype = "text",
     }
     m_cfg_before_update = {
         pattern = function(new) autocmd_on_pattern("BufWritePost", new, write_command_output) end,
         out_filetype = function(new) buf_set_filetype(m_buffers.stdout, new) end,
-        err_filetype = function(new) buf_set_filetype(m_buffers.stderr, new) end,
     }
     autocmd_on_pattern("BufWritePost", m_cfg.pattern, write_command_output)
 end
@@ -241,26 +245,22 @@ local function show_config()
         string.format(m_cfg_var_fmt, "timeout", m_cfg.timeout_ms),
         string.format(m_cfg_var_fmt, "subshell", m_cfg.subshell),
         string.format(m_cfg_var_fmt, "out_filetype", m_cfg.out_filetype),
-        string.format(m_cfg_var_fmt, "err_filetype", m_cfg.err_filetype),
     })
     autocmd_on_buffer("BufHidden", m_buffers.config, update_config_from_buffer)
 end
 
 ---@param split_stdout "left" | "right" | "above" | "below"
----@param split_stderr "left" | "right" | "above" | "below"
-local function show_dump_windows(split_stdout, split_stderr)
+local function show_dump_windows(split_stdout)
     local stdout = buf_create_scratch("stdout", "text")
-    local stderr = buf_create_scratch("stderr", "text")
-    close_windows({ stdout, stderr }) -- reset layout cleanly
+    close_windows({ stdout }) -- reset layout cleanly
     local win = 0
     win = create_split_window(win, stdout, split_stdout) -- split relative to current window
-    win = create_split_window(win, stderr, split_stderr) -- split relative to stdout window
 end
 
 -- stylua: ignore start
-local function runner_dump_right_below() init_config() show_dump_windows("right", "below") show_config() end
-local function runner_dump_above_right() init_config() show_dump_windows("above", "right") show_config() end
-local function runner_dump_above_below() init_config() show_dump_windows("above", "below") show_config() end
+local function runner_dump_right() init_config() show_dump_windows("right") show_config() end
+local function runner_dump_above() init_config() show_dump_windows("above") show_config() end
+local function runner_dump_below() init_config() show_dump_windows("below") show_config() end
 -- stylua: ignore end
 
 local function runner_clear()
@@ -276,9 +276,9 @@ local function runner_restart()
     show_config()
 end
 
-vim.api.nvim_create_user_command("RunnerDumpRightBelow", runner_dump_right_below, {})
-vim.api.nvim_create_user_command("RunnerDumpAboveRight", runner_dump_above_right, {})
-vim.api.nvim_create_user_command("RunnerDumpAboveBelow", runner_dump_above_below, {})
+vim.api.nvim_create_user_command("RunnerDumpRight", runner_dump_right, {})
+vim.api.nvim_create_user_command("RunnerDumpAbove", runner_dump_above, {})
+vim.api.nvim_create_user_command("RunnerDumpBelow", runner_dump_below, {})
 vim.api.nvim_create_user_command("RunnerDumpShowCfg", show_config, {})
 vim.api.nvim_create_user_command("RunnerDumpClear", runner_clear, {})
 vim.api.nvim_create_user_command("RunnerDumpRestart", runner_restart, {})
