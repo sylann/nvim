@@ -116,7 +116,8 @@ return {
         map("n", "<leader>km", "Find keymaps", builtin.keymaps)
         map("n", "<leader>fd", "Find diagnostics", builtin.diagnostics)
         map("n", "<leader>fh", "Find current file's git revisions", telescope.extensions.git_file_history.git_file_history)
-        map("n", "<leader>ff", "Find filtered files in current workspace", builtin.find_files)
+        map("n", "<leader>ff", "Find all files in current workspace", builtin.find_files)
+        map("n", "<leader>fg", "Find tracked files in current workspace", builtin.git_files)
         map(
             "n",
             "<leader>f<S-F>",
