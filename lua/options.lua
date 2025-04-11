@@ -48,6 +48,8 @@ vim.opt.breakindent = true
 vim.opt.foldmethod = "manual"
 vim.opt.foldlevelstart = 99
 
+vim.diagnostic.config({ virtual_lines = true })
+
 if vim.fn.has("wsl") then
     vim.g.clipboard = {
         name = "WSL Clipboard",
