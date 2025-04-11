@@ -16,6 +16,7 @@ return {
                 python     = { "ruff_format",  lsp_format = "never"    },
                 json       = { "prettier",     lsp_format = "never"    },
                 css        = { "prettier",     lsp_format = "never"    },
+                php        = { "pint",         lsp_format = "fallback" },
                 javascript = { "prettier",     lsp_format = "fallback" },
                 typescript = { "prettier",     lsp_format = "fallback" },
                 vue        = { "prettier",     lsp_format = "fallback" },
