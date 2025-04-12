@@ -76,7 +76,7 @@ function M.configure(theme, hl, link)
     local _ = "NONE"
     -- stylua: ignore
     local ui = {
-        bg1            = ({ "#0B0B0B", "#0B0B0B", "#F4F4F4" })[theme.index],
+        bg1            = ({ "#0B0B0B", "#0B0B0B", "#FFFFFF" })[theme.index],
         bg2            = ({ "#121212", "#121212", "#EDEDED" })[theme.index],
         bg3            = ({ "#1B1B1B", "#1B1B1B", "#E4E4E4" })[theme.index],
         bg4            = ({ "#2D2D2D", "#2D2D2D", "#D2D2D2" })[theme.index],
@@ -104,18 +104,31 @@ function M.configure(theme, hl, link)
         success        = ({ "#14C50B", "#14C50B", "#14C50B" })[theme.index],
         success_light  = ({ "#AAF2A6", "#AAF2A6", "#AAF2A6" })[theme.index],
         debug          = ({ "#B267E6", "#B267E6", "#B267E6" })[theme.index],
-        remove_darkest = ({ "#420000", "#420000", "#420000" })[theme.index],
-        remove_dark    = ({ "#720000", "#720000", "#720000" })[theme.index],
-        remove         = ({ "#B4151B", "#B4151B", "#B4151B" })[theme.index],
-        remove_light   = ({ "#E74E3A", "#E74E3A", "#E74E3A" })[theme.index],
-        add_darkest    = ({ "#004200", "#004200", "#004200" })[theme.index],
-        add_dark       = ({ "#007200", "#007200", "#007200" })[theme.index],
-        add            = ({ "#58BC0C", "#58BC0C", "#58BC0C" })[theme.index],
-        add_light      = ({ "#7ED258", "#7ED258", "#7ED258" })[theme.index],
-        change_darkest = ({ "#212100", "#212100", "#212100" })[theme.index],
-        change_dark    = ({ "#514100", "#514100", "#514100" })[theme.index],
-        change         = ({ "#CCA700", "#CCA700", "#CCA700" })[theme.index],
-        change_light   = ({ "#EBCB75", "#EBCB75", "#EBCB75" })[theme.index],
+        remove_darkest = ({ "#420000", "#420000", "#FFCCCC" })[theme.index],
+        remove_dark    = ({ "#720000", "#720000", "#FF9999" })[theme.index],
+        remove         = ({ "#B4151B", "#B4151B", "#FF6666" })[theme.index],
+        remove_light   = ({ "#E74E3A", "#E74E3A", "#FF0000" })[theme.index],
+        add_darkest    = ({ "#004200", "#004200", "#CCFFCC" })[theme.index],
+        add_dark       = ({ "#007200", "#007200", "#99FF99" })[theme.index],
+        add            = ({ "#58BC0C", "#58BC0C", "#66FF66" })[theme.index],
+        add_light      = ({ "#7ED258", "#7ED258", "#00FF00" })[theme.index],
+        change_darkest = ({ "#212100", "#212100", "#FFEEAA" })[theme.index],
+        change_dark    = ({ "#514100", "#514100", "#FFDD77" })[theme.index],
+        change         = ({ "#CCA700", "#CCA700", "#FFCC44" })[theme.index],
+        change_light   = ({ "#EBCB75", "#EBCB75", "#FFAA00" })[theme.index],
+        SlNormal       = ({ "#166682", "#166682", "#6CBBCC" })[theme.index],
+        SlProtected    = ({ "#0B0B0B", "#0B0B0B", "#F8F8F8" })[theme.index],
+        SlModified     = ({ "#EE5533", "#EE5533", "#FF6622" })[theme.index],
+        SlModifiedAlt  = ({ "#2C0A00", "#2C0A00", "#FFDDAA" })[theme.index],
+        SlReadonly     = ({ "#8B92A8", "#8B92A8", "#6CBBCC" })[theme.index],
+        SlProblem      = ({ "#CC1166", "#CC1166", "#FF88AA" })[theme.index],
+        SlProblemAlt   = ({ "#2C000A", "#2C000A", "#FFDDEF" })[theme.index],
+        SlVisual       = ({ "#A130B7", "#A130B7", "#EEAAFF" })[theme.index],
+        SlSelect       = ({ "#A678BD", "#A678BD", "#EECCFF" })[theme.index],
+        SlInsert       = ({ "#B5800B", "#B5800B", "#E9BA3B" })[theme.index],
+        SlReplace      = ({ "#D5685B", "#D5685B", "#FC989B" })[theme.index],
+        SlCommand      = ({ "#199817", "#199817", "#AAFFAA" })[theme.index],
+        SlTerminal     = ({ "#199817", "#199817", "#AAFFAA" })[theme.index],
     }
 
     -- stylua: ignore
@@ -203,20 +216,20 @@ function M.configure(theme, hl, link)
     hl("WinSeparator", ui.fg_disabled, _)
 
     -- Statusline modes (non-standard hl groups)
-    hl("SlAlt", ui.fg1, ui.bg4)
-    hl("SlNormal", ui.fg1, "#166682")
-    hl("SlProtected", ui.bg1, ui.fg1)
-    hl("SlModified", ui.fg1, "#CC5533")
-    hl("SlModifiedText", "#EE5533", "#2C0A00")
-    hl("SlReadonly", ui.bg1, "#8B92A8")
-    hl("SlProblem", ui.fg1, "#CC1166")
-    hl("SlProblemText", "#CC1166", "#2C000A")
-    hl("SlVisual", ui.fg1, "#A130B7")
-    hl("SlSelect", ui.fg1, "#A678BD")
-    hl("SlInsert", ui.fg1, "#B5800B")
-    hl("SlReplace", ui.fg1, "#D5685B")
-    hl("SlCommand", ui.fg1, "#199817")
-    hl("SlTerminal", ui.fg1, "#199817")
+    hl("SlAlt",          ui.fg1,         ui.bg4)
+    hl("SlNormal",       ui.fg1,         ui.SlNormal)
+    hl("SlProtected",    ui.SlProtected, ui.fg1)
+    hl("SlModified",     ui.fg1,         ui.SlModified)
+    hl("SlModifiedText", ui.SlModified,  ui.SlModifiedAlt)
+    hl("SlReadonly",     ui.bg1,         ui.SlReadonly)
+    hl("SlProblem",      ui.fg1,         ui.SlProblem)
+    hl("SlProblemText",  ui.SlProblem,   ui.SlProblemAlt)
+    hl("SlVisual",       ui.fg1,         ui.SlVisual)
+    hl("SlSelect",       ui.fg1,         ui.SlSelect)
+    hl("SlInsert",       ui.fg1,         ui.SlInsert)
+    hl("SlReplace",      ui.fg1,         ui.SlReplace)
+    hl("SlCommand",      ui.fg1,         ui.SlCommand)
+    hl("SlTerminal",     ui.fg1,         ui.SlTerminal)
 
     -- Diagnostics
     hl("DiagnosticError", ui.error, _)
