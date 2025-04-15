@@ -13,6 +13,7 @@ local themes = {
     { name = "sylfire_light", background = "light", index = 3 },
 }
 M.default_theme = themes[1].name
+M.default_theme_light = themes[3].name
 
 ---@alias Attr "bold" | "italic" | "strikethrough" | "underline" | "undercurl" | "underdouble" | "underdotted" | "underdashed"
 ---@alias HlHandler fun(name: string, fg: string, bg: string, ...: Attr)
@@ -21,7 +22,12 @@ M.default_theme = themes[1].name
 ---Call this function at neovim startup
 function M.init()
     -- TODO: generate_colorschemes if missing
-    vim.cmd.colorscheme(M.default_theme)
+    local light = os.getenv("TERM_LIGHT")
+    if light and light ~= "" then
+        vim.cmd.colorscheme(M.default_theme_light)
+    else
+        vim.cmd.colorscheme(M.default_theme)
+    end
 end
 
 ---Call this function when this file is updated
