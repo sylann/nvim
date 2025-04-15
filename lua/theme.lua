@@ -98,7 +98,7 @@ function M.configure(theme, hl, link)
         search         = ({ "#3E4451", "#3E4451", "#AFBFEE" })[theme.index],
         match          = ({ "#D8B43C", "#D8B43C", "#D8B43C" })[theme.index],
         match_dim      = ({ "#D5B06B", "#D5B06B", "#D5B06B" })[theme.index],
-        cursor         = ({ "#00FF00", "#00FF00", "#00FF00" })[theme.index],
+        cursor         = ({ "#00FF00", "#00FF00", "#FF33AA" })[theme.index],
         error          = ({ "#F44747", "#F44747", "#F44747" })[theme.index],
         error_light    = ({ "#F28686", "#F28686", "#F28686" })[theme.index],
         warning        = ({ "#FF8800", "#FF8800", "#FF8800" })[theme.index],
