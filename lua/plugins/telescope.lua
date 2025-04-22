@@ -72,6 +72,7 @@ return {
                         "--glob", "!**/.git/*",
                         "--glob", "!**/target/*",
                         "--glob", "!**/node_modules/*",
+                        "--glob", "!**/vendor/*",
                         "--hidden",
                         "--no-ignore",
                     },
