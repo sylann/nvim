@@ -73,6 +73,7 @@ return {
                         "--glob", "!**/target/*",
                         "--glob", "!**/node_modules/*",
                         "--glob", "!**/vendor/*",
+                        "--glob", "!**/.cache/*",
                         "--hidden",
                         "--no-ignore",
                     },
