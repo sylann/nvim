@@ -54,6 +54,7 @@ return {
                         "!**/.git/*",
                         "!**/target/*",
                         "!**/node_modules/*",
+                        "!**/public/**/filament*",
                         "!*-lock.*",
                         "!Cargo.lock",
                         "!go.sum",
