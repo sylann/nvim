@@ -30,6 +30,11 @@ return {
             enable = true,
 
             disable = function(lang, buf)
+                -- Language
+                local disabled_languages = {"csv", "tsv", "rfc_csv"}
+                if vim.list_contains(disabled_languages, lang) then return true end
+
+                -- Size
                 local max_filesize = 1024 * 250 -- 250 kb
                 local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
                 if ok and stats and stats.size > max_filesize then return true end
