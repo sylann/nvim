@@ -137,25 +137,64 @@ local function get_mode_data()
     return modes.UNKNOWN -- Should not arrive here: fix it if it happens
 end
 
-GitAheadBehind = { ahead = 0, behind = 0 }
+GitState = { head = "", ahead = 0, behind = 0 }
 
-function UpdateAheadBehind()
-    local cmd = vim.split("git rev-list --left-right --count HEAD...@{upstream}", " ")
-    local cwd = vim.fn.expand("%:h")
-
+local function safe_cmd(cmd, cwd)
     -- skip buffers that are not real files
     if cwd == "" or cwd:match("^%w+:") then return end
     local ok, p = pcall(vim.system, cmd, { text = true, timeout = 1000, cwd = cwd })
-    if not ok then return end
-
+    if not ok or not p then return end
     local res = p:wait()
-    local a, b
-    if res.stdout then
-        a, b = res.stdout:match("(%d+)%s(%d+)")
-    end
-    GitAheadBehind.ahead = a and tonumber(a) or 0
-    GitAheadBehind.behind = b and tonumber(b) or 0
+    if res then return res.stdout end
 end
+
+---@param fullref string
+---@return string, string?, number? -- head ref, parent ref, number of commits between parent and head
+local function parse_describe(fullref)
+    local parent, dist, head
+    -- possible alternate approach:  head, dist, parent = fullref:match("^(.+)-(%d+)-g(%x+)$")
+    local parts = vim.fn.split(fullref, "-")
+    if #parts >= 3 then
+        dist = tonumber(parts[#parts-1])
+        head = parts[#parts]
+        head = (head:start_with("g") and #head >= 8) and head:sub(2) or nil
+        if dist and head then
+            parent = table.concat(parts, "-", 1, #parts - 2)
+            return head, parent, dist
+        end
+    end
+    return fullref, nil, nil
+end
+
+function UpdateAheadBehind()
+    local cwd_buf = vim.fn.expand("%:h")
+    local cwd_ws = vim.fn.getcwd()
+
+    local cmd_head = vim.split("git describe --all --always HEAD", " ")
+    local cmd_ab = vim.split("git rev-list --left-right --count HEAD...@{upstream}", " ")
+    local out_head = safe_cmd(cmd_head, cwd_buf) or safe_cmd(cmd_head, cwd_ws) or ""
+    local out_ab = safe_cmd(cmd_ab, cwd_buf) or safe_cmd(cmd_ab, cwd_ws) or "0 0"
+
+    local head, parent, dist
+    if out_head:start_with("tags/") then
+        head, parent, dist = parse_describe(out_head:match("^tags/(.+)\n$"))
+    elseif out_head:start_with("heads/") then
+        head, parent, dist = parse_describe(out_head:match("^heads/(.+)\n$"))
+    elseif out_head:start_with("remotes/") then
+        head, parent, dist = parse_describe(out_head:match("^remotes/(.+)\n$"))
+    end
+
+    if head and parent and dist then
+        head = string.format("%s (%s+%d)", head, parent, dist)
+    end
+
+    local a, b = out_ab:match("(%d+)%s(%d+)")
+    GitState.head = head
+    GitState.ahead = a and tonumber(a) or 0
+    GitState.behind = b and tonumber(b) or 0
+end
+
+GitState = { head = "", ahead = 0, behind = 0 }
 
 vim.api.nvim_create_autocmd({ "VimEnter", "BufEnter" }, { callback = UpdateAheadBehind })
 vim.api.nvim_create_autocmd({ "User" }, {
@@ -165,7 +204,7 @@ vim.api.nvim_create_autocmd({ "User" }, {
 
 local function sl_branch()
     local items = {} ---@type SlItem[]
-    local head, a, b = vim.b.gitsigns_head, GitAheadBehind.ahead, GitAheadBehind.behind
+    local head, a, b = GitState.head or vim.b.gitsigns_head, GitState.ahead, GitState.behind
     if head and head ~= "" then
         if #head > 25 then head = head:sub(1, 22) .. "…" end
         table.insert(items, { text = "" })
