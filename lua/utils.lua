@@ -70,19 +70,35 @@ table.splice = function(tabl, must_be_removed)
     return removed
 end
 
---- Create a map function with pre-baked options.
---- It takes a table of base options appropriate for use by `vim.keymap.set`
---- and returns a new function that can be used like `vim.keymap.set` except
---- the signature is (mode, keys, desc, command).
---- The resulting call to vim.keymap.set will be:
+---This correponds to the 'opts' argument in `vim.keymap.set(mode, lhs, rhs, opts)`.
+---@class KeymapSetOptions
+---@field desc string
+---@field buffer integer|boolean  Creates buffer-local mapping. `0` or `true` for current buffer.
+---@field remap boolean           Default: `false`. Make the mapping recursive. Inverse of {noremap}.
+---@field expr boolean            Default: `false`.
+---@field unique boolean          Default: `false`.
+---@field nowait boolean          Default: `false`.
+---@field silent boolean          Default: `false`.
+---@field script boolean          Default: `false`.
+
+---Shortcut function that takes parameters in a way that make keymap declarations more compact and readable.
 ---
---- vim.keymap.set(mode, keys, command, { desc = desc, ...baseopts })
+--- The following:
+---     local map = Mapper({ buffer = 0 })
+---     map("n", "ghi", "Prints 'hi'", ":echo hi<CR>")
+---     map("n", "gby", "Prints 'bye'", ":echo bye<CR>")
 ---
---- This helper is only meant to make it easier to declare consecutive keymaps
---- with common base options, and assuming a description is always wanted.
+--- Is equivalent to:
+---     vim.keymap.set("n", "ghi", ":echo hi<CR>", { desc = "Prints 'hi'", buffer = 0 })
+---     vim.keymap.set("n", "gby", ":echo bye<CR>", { desc = "Prints 'bye'", buffer = 0 })
 ---
---- @param baseopts table
---- @return function
+---@alias MapShortcutFunction fun(mode: string|string[], keys: string|string[], desc: string, command: string|function)
+
+--- Create a shortcut function for `vim.keymap.set` that is primarily less verbose
+--- when adding descriptions, but also allows predefining some options such as buffer, etc...
+--- Useful when defining several related keymaps.
+--- @param baseopts KeymapSetOptions
+--- @return MapShortcutFunction
 function Mapper(baseopts)
     return function(mode, keys, desc, command)
         local opts = table.merge({ desc = desc }, baseopts)
