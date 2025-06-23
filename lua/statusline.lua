@@ -137,7 +137,7 @@ local function get_mode_data()
     return modes.UNKNOWN -- Should not arrive here: fix it if it happens
 end
 
-GitState = { head = "", ahead = 0, behind = 0 }
+SlGitState = { head = "", ahead = 0, behind = 0 }
 
 local function safe_cmd(cmd, cwd)
     -- skip buffers that are not real files
@@ -166,7 +166,7 @@ local function parse_describe(fullref)
     return fullref, nil, nil
 end
 
-function UpdateAheadBehind()
+function SlUpdateGitState()
     local cwd_buf = vim.fn.expand("%:h")
     local cwd_ws = vim.fn.getcwd()
 
@@ -189,22 +189,22 @@ function UpdateAheadBehind()
     end
 
     local a, b = out_ab:match("(%d+)%s(%d+)")
-    GitState.head = head
-    GitState.ahead = a and tonumber(a) or 0
-    GitState.behind = b and tonumber(b) or 0
+    SlGitState.head = head
+    SlGitState.ahead = a and tonumber(a) or 0
+    SlGitState.behind = b and tonumber(b) or 0
 end
 
-GitState = { head = "", ahead = 0, behind = 0 }
+SlGitState = { head = "", ahead = 0, behind = 0 }
 
-vim.api.nvim_create_autocmd({ "VimEnter", "BufEnter" }, { callback = UpdateAheadBehind })
+vim.api.nvim_create_autocmd({ "VimEnter", "BufEnter" }, { callback = SlUpdateGitState })
 vim.api.nvim_create_autocmd({ "User" }, {
     pattern = { "FugitiveChanged" },
-    callback = UpdateAheadBehind,
+    callback = SlUpdateGitState,
 })
 
 local function sl_branch()
     local items = {} ---@type SlItem[]
-    local head, a, b = GitState.head or vim.b.gitsigns_head, GitState.ahead, GitState.behind
+    local head, a, b = SlGitState.head or vim.b.gitsigns_head, SlGitState.ahead, SlGitState.behind
     if head and head ~= "" then
         if #head > 25 then head = head:sub(1, 22) .. "…" end
         table.insert(items, { text = "" })
@@ -267,7 +267,7 @@ local function sl_filesize()
     return " " .. format_size(size)
 end
 
-function DrawMyStatusline()
+function SlDraw()
     local mode = get_mode_data()
     local hl_ = "Statusline"
     local alt = "SlAlt"
@@ -287,4 +287,4 @@ function DrawMyStatusline()
     })
 end
 
-vim.o.statusline = "%!v:lua.DrawMyStatusline()"
+vim.o.statusline = "%!v:lua.SlDraw()"
