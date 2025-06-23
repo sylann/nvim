@@ -33,6 +33,9 @@ local confs = {}
 
 -- Server names that should always be installed automatically by mason.
 local always_installed = { "stylua" }
+-- INFO: :help mason-lspconfig-default-settings
+-- NOTE: rust-analyzer must not be enabled by mason because rustacean automatically starts it itself
+local mason_auto_enable = { exclude = { "rust_analyzer" } }
 
 -- LSP servers and clients are able to communicate to each other what features they support.
 -- By default, Neovim doesn't support everything that is in the LSP Specification.
@@ -177,7 +180,7 @@ M.config = function()
     -- TODO: stop using Mason at some point and carefully manage installed LSPs, formatters, ...
     require("mason").setup()
     require("mason-tool-installer").setup({ ensure_installed = always_installed })
-    require("mason-lspconfig").setup({ handlers = { mason_lspconfig_handle_server } })
+    require("mason-lspconfig").setup({ handlers = { mason_lspconfig_handle_server }, automatic_enable = mason_auto_enable })
 end
 
 return M
