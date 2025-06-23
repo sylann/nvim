@@ -55,16 +55,19 @@ end
 
 ---@param buf integer
 ---@param lines string[]
-local function buf_write_lines(buf, lines)
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+---@param append boolean?
+local function buf_write_lines(buf, lines, append)
+    local start = append and -1 or 0
+    vim.api.nvim_buf_set_lines(buf, start, -1, false, lines)
     vim.api.nvim_buf_set_option(buf, "modified", false)
 end
 
 ---@param buf integer
 ---@param text string
-local function buf_write_text(buf, text)
+---@param append boolean
+local function buf_write_text(buf, text, append)
     local lines = vim.split(text, "\n", { trimempty = true })
-    buf_write_lines(buf, lines)
+    buf_write_lines(buf, lines, append)
 end
 
 ---@param buf integer
@@ -193,8 +196,8 @@ local function write_command_output()
     local cmd_args = m_cfg.subshell == "true" and { "bash", "-c", m_cfg.command } or vim.split(m_cfg.command, "%s+")
     local timeout = tonumber(m_cfg.timeout_ms, 10)
     local result = vim.system(cmd_args, { text = true, timeout = timeout }):wait()
-    buf_write_text(m_buffers.stdout, result.stdout)
-    buf_write_text(m_buffers.stdout, result.stderr)
+    buf_write_text(m_buffers.stdout, result.stdout, false)
+    buf_write_text(m_buffers.stdout, result.stderr, true)
 end
 
 local function guess_initial_command()
