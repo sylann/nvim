@@ -275,6 +275,7 @@ function SlDraw()
     local hl2 = mode.hl2
     return sl_render_blocks({
         sl_block({ pl = " ", pr = " ", hl = hl1 }, mode.name),
+        sl_block({ pl = " ", pr = " ", hl = alt }, vim.fs.basename(vim.fn.getcwd())),
         sl_block({ pl = " ", pr = " ", hl = hl2 or hl_ }, "%{expand('%:~:.')}%( %h%w%q%)"),
         sl_block({ pl = " ", pr = " ", hl = alt }, sl_diagnostics()),
         sl_block({ pl = nil, pr = nil, hl = hl_ }, "%="),
