@@ -139,16 +139,16 @@ function M.configure(theme, hl, link)
 
     -- stylua: ignore
     local syn = {
-        keyword       = ({ "#D14F3E", "#FF3311", "#EE1100" })[theme.index],
+        keyword       = ({ "#D14F3E", "#FF3311", "#DD2200" })[theme.index],
         special       = ({ "#7BACB6", "#66BBCC", "#00A0A0" })[theme.index],
         procedure     = ({ "#E0873C", "#FF7711", "#0055CC" })[theme.index],
         macro         = ({ "#9F6DA2", "#9966BB", "#6622AA" })[theme.index],
-        type_1        = ({ "#CDAC63", "#F0B030", "#CC9900" })[theme.index],
-        type_2        = ({ "#DDB150", "#FFB010", "#DDAA11" })[theme.index],
+        type_1        = ({ "#CDAC63", "#F0B030", "#AA7700" })[theme.index],
+        type_2        = ({ "#DDB150", "#FFB010", "#CC8800" })[theme.index],
         number        = ({ "#B37986", "#CC6699", "#AA1188" })[theme.index],
-        string        = ({ "#CE9178", "#EE9977", "#BB7755" })[theme.index],
-        bytes         = ({ "#EDD49D", "#EDD49D", "#BB7700" })[theme.index],
-        regex         = ({ "#E79474", "#FF8866", "#CF7755" })[theme.index],
+        string        = ({ "#CE9178", "#EE9977", "#994433" })[theme.index],
+        bytes         = ({ "#EDD49D", "#EDD49D", "#995522" })[theme.index],
+        regex         = ({ "#E79474", "#FF8866", "#992233" })[theme.index],
         property      = ({ "#D7C7A4", "#D7C7A4", "#112233" })[theme.index],
         namespace     = ({ "#B2AA93", "#B2AA93", "#304F6F" })[theme.index],
         symbol        = ({ "#D9D3C1", "#D9D3C1", "#000000" })[theme.index],
