@@ -1,3 +1,9 @@
+---@param self string
+---@param prefix string
+string.starts_with = function (self, prefix)
+    return self:sub(1, #prefix) == prefix
+end
+
 -- INFO: Bridge new lua features that are helpful and easy to emulate.
 -- Compatibility Aug 2024:
 --   Latest lua version: 5.4

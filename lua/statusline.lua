@@ -157,7 +157,7 @@ local function parse_describe(fullref)
     if #parts >= 3 then
         dist = tonumber(parts[#parts-1])
         head = parts[#parts]
-        head = (head:start_with("g") and #head >= 8) and head:sub(2) or nil
+        head = (head:starts_with("g") and #head >= 8) and head:sub(2) or nil
         if dist and head then
             parent = table.concat(parts, "-", 1, #parts - 2)
             return head, parent, dist
@@ -176,11 +176,11 @@ function SlUpdateGitState()
     local out_ab = safe_cmd(cmd_ab, cwd_buf) or safe_cmd(cmd_ab, cwd_ws) or "0 0"
 
     local head, parent, dist
-    if out_head:start_with("tags/") then
+    if out_head:starts_with("tags/") then
         head, parent, dist = parse_describe(out_head:match("^tags/(.+)\n$"))
-    elseif out_head:start_with("heads/") then
+    elseif out_head:starts_with("heads/") then
         head, parent, dist = parse_describe(out_head:match("^heads/(.+)\n$"))
-    elseif out_head:start_with("remotes/") then
+    elseif out_head:starts_with("remotes/") then
         head, parent, dist = parse_describe(out_head:match("^remotes/(.+)\n$"))
     end
 
