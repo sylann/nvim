@@ -1,5 +1,6 @@
 --  INFO: :help option-list
 
+vim.g.disable_rainbow_statusline = 1
 vim.g.have_nerd_font = true
 vim.g.omni_sql_no_default_maps = 1 -- prevent generation of special keymaps for *.sql files
 
