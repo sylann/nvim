@@ -78,14 +78,14 @@ end
 
 ---This correponds to the 'opts' argument in `vim.keymap.set(mode, lhs, rhs, opts)`.
 ---@class KeymapSetOptions
----@field desc string
----@field buffer integer|boolean  Creates buffer-local mapping. `0` or `true` for current buffer.
----@field remap boolean           Default: `false`. Make the mapping recursive. Inverse of {noremap}.
----@field expr boolean            Default: `false`.
----@field unique boolean          Default: `false`.
----@field nowait boolean          Default: `false`.
----@field silent boolean          Default: `false`.
----@field script boolean          Default: `false`.
+---@field desc? string
+---@field buffer? integer|boolean  Creates buffer-local mapping. `0` or `true` for current buffer.
+---@field remap? boolean           Default: `false`. Make the mapping recursive. Inverse of {noremap}.
+---@field expr? boolean            Default: `false`.
+---@field unique? boolean          Default: `false`.
+---@field nowait? boolean          Default: `false`.
+---@field silent? boolean          Default: `false`.
+---@field script? boolean          Default: `false`.
 
 ---Shortcut function that takes parameters in a way that make keymap declarations more compact and readable.
 ---
@@ -98,7 +98,7 @@ end
 ---     vim.keymap.set("n", "ghi", ":echo hi<CR>", { desc = "Prints 'hi'", buffer = 0 })
 ---     vim.keymap.set("n", "gby", ":echo bye<CR>", { desc = "Prints 'bye'", buffer = 0 })
 ---
----@alias MapShortcutFunction fun(mode: string|string[], keys: string|string[], desc: string, command: string|function)
+---@alias MapShortcutFunction fun(mode: string|string[], key: string, desc: string, command: string|function)
 
 --- Create a shortcut function for `vim.keymap.set` that is primarily less verbose
 --- when adding descriptions, but also allows predefining some options such as buffer, etc...
@@ -106,9 +106,9 @@ end
 --- @param baseopts KeymapSetOptions
 --- @return MapShortcutFunction
 function Mapper(baseopts)
-    return function(mode, keys, desc, command)
+    return function(mode, key, desc, command)
         local opts = table.merge({ desc = desc }, baseopts)
-        vim.keymap.set(mode, keys, command, opts)
+        vim.keymap.set(mode, key, command, opts)
     end
 end
 
