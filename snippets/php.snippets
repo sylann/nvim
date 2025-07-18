@@ -1,0 +1,28 @@
+snippet doc
+	/**
+	 * ${1:Documentation}
+	 */
+
+snippet function
+	function ${1:funcName}(${2:args})${3:: string}
+	{
+	  $0
+	}
+
+snippet fn
+	fn (${2:args}) => ${3: 0}
+
+snippet if
+	if (${1:condition}) {
+	  ${2:// something}
+	}$0
+
+snippet else
+	else {
+	  $0
+	}
+
+snippet foreach
+	foreach (${1:array}) {
+	  $0
+	}
