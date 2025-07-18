@@ -60,8 +60,8 @@ return {
                 map("n", "gr", "[LSP] Go to references", tesc.lsp_references)
                 map("n", "gt", "[LSP] Go to type definition", tesc.lsp_type_definitions)
                 map("n", "gi", "[LSP] Go to implementation", vim.lsp.buf.implementation)
-                map("n", "gk", "[LSP] Go to previous diagnostic", vim.diagnostic.goto_prev)
-                map("n", "gj", "[LSP] Go to next diagnostic", vim.diagnostic.goto_next)
+                map("n", "gk", "[LSP] Go to previous diagnostic", function() vim.diagnostic.jump({ count = -1 }) end)
+                map("n", "gj", "[LSP] Go to next diagnostic", function() vim.diagnostic.jump({ count = 1 }) end)
                 -- map("n", "gf", "[LSP] Autoformat current buffer", vim.lsp.buf.format) -- let conform handle formatting
                 map("n", "gn", "[LSP] Rename symbol", vim.lsp.buf.rename)
                 map({ "n", "x" }, "ga", "[LSP] Show code actions", vim.lsp.buf.code_action)

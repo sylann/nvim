@@ -59,7 +59,7 @@ end
 local function buf_write_lines(buf, lines, append)
     local start = append and -1 or 0
     vim.api.nvim_buf_set_lines(buf, start, -1, false, lines)
-    vim.api.nvim_buf_set_option(buf, "modified", false)
+    vim.api.nvim_set_option_value("modified", false, { buf })
 end
 
 ---@param buf integer

@@ -16,14 +16,14 @@ local function pane_resizer(split, sign)
         local win = vim.api.nvim_get_current_win()
         local nothing_further = false
         if split == "vertical" then
-            local screen_width = vim.api.nvim_get_option("columns")
+            local screen_width = vim.api.nvim_get_option_value("columns", {})
             local left = vim.api.nvim_win_get_position(win)[2] -- { top, left }
             local win_width = vim.api.nvim_win_get_width(win)
             local right = left + win_width
             nothing_further = right == screen_width
             if nothing_further and left == 0 then return end -- nothing both left and right
         else
-            local screen_height = vim.api.nvim_get_option("lines")
+            local screen_height = vim.api.nvim_get_option_value("lines", {})
             local top = vim.api.nvim_win_get_position(win)[1] -- { top, left }
             local win_height = vim.api.nvim_win_get_height(win)
             local bottom = top + win_height
