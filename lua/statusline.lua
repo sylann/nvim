@@ -196,6 +196,7 @@ end
 
 SlGitState = { head = "", ahead = 0, behind = 0 }
 
+SlUpdateGitState()
 vim.api.nvim_create_autocmd({ "VimEnter", "BufEnter" }, { callback = SlUpdateGitState })
 vim.api.nvim_create_autocmd({ "User" }, {
     pattern = { "FugitiveChanged" },
