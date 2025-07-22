@@ -19,6 +19,8 @@ vim.keymap.set("n", "<leader>Y", [["+Y]], { desc = "[Y]ank current line's conten
 
 vim.keymap.set("x", "<S-K>", ":m '<-2<CR>gv=gv", { desc = "Move current selection up" })
 vim.keymap.set("x", "<S-J>", ":m '>+1<CR>gv=gv", { desc = "Move current selection down" })
+vim.keymap.set("x", "<", "<gv", { desc = "Unindent and reselect previous selection" })
+vim.keymap.set("x", ">", ">gv", { desc = "Indent and reselect previous selection" })
 
 vim.keymap.set("n", "<C-K>", ":cprev<CR>zz", { desc = "Move to previous Quickfix" })
 vim.keymap.set("n", "<C-J>", ":cnext<CR>zz", { desc = "Move to next Quickfix" })
