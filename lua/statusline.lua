@@ -268,6 +268,34 @@ local function sl_filesize()
     return " " .. format_size(size)
 end
 
+---@return integer, integer, integer, integer -- line 1, column 1, line 2, column 2
+local function get_selection()
+    local p1, p2 = vim.fn.getpos("."), vim.fn.getpos("v")
+    return p1[2], p1[3], p2[2], p2[3]
+end
+
+local function sl_mode(mode_name)
+    if mode_name == modes.VISUAL.name then
+        local line1, col1, line2, col2 = get_selection()
+        if line1 == line2 then
+            if col1 == col2 then return mode_name .. " [0x%B]" end -- Mode + byte value of character under cursor
+            local width = vim.fn.abs(col2 - col1) + 1
+            return string.format("%s [%d]", mode_name, width) -- Mode + selection size
+        end
+    elseif mode_name == modes.VISUALLI.name then
+        local line1, _, line2, _ = get_selection()
+        local height = vim.fn.abs(line2 - line1) + 1
+        return string.format("%s [%d]", mode_name, height) -- Mode + number of selected lines
+    elseif mode_name == modes.VISUALBL.name then
+        local line1, col1, line2, col2 = get_selection()
+        local width = vim.fn.abs(col1 - col2) + 1
+        local height = vim.fn.abs(line2 - line1) + 1
+        return string.format("%s [%dx%d]", mode_name, width, height) -- Mode + Size of the selection block
+    end
+
+    return mode_name
+end
+
 function SlDraw()
     local mode = get_mode_data()
     local hl_ = "Statusline"
@@ -275,7 +303,7 @@ function SlDraw()
     local hl1 = mode.hl
     local hl2 = mode.hl2
     return sl_render_blocks({
-        sl_block({ pl = " ", pr = " ", hl = hl1 }, mode.name),
+        sl_block({ pl = " ", pr = " ", hl = hl1 }, sl_mode(mode.name)),
         sl_block({ pl = " ", pr = " ", hl = alt }, vim.fs.basename(vim.fn.getcwd())),
         sl_block({ pl = " ", pr = " ", hl = hl2 or hl_ }, "%{expand('%:~:.')}%( %h%w%q%) %l:%v"),
         sl_block({ pl = nil, pr = nil, hl = hl_ }, "%="),
