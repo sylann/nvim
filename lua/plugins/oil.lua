@@ -93,6 +93,18 @@ local function yank_entry_path(regname)
     end
 end
 
+local function find_files_inside()
+    local dir_path, entry = get_entry_data()
+    if entry.type == "directory" then dir_path = dir_path .. entry.name end
+    require("telescope.builtin").find_files({ cwd = dir_path, prompt_title = "Find files: " .. dir_path })
+end
+
+local function live_grep_inside()
+    local dir_path, entry = get_entry_data()
+    if entry.type == "directory" then dir_path = dir_path .. entry.name end
+    require("telescope.builtin").live_grep({ cwd = dir_path, prompt_title = "Live grep: " .. dir_path })
+end
+
 return {
     "stevearc/oil.nvim",
     enabled = true,
@@ -135,6 +147,8 @@ return {
                 ["gt"] = actions.toggle_trash,
                 ["<C-y>"] = yank_entry_path("@"),
                 ["<leader>y"] = yank_entry_path("+"),
+                ["<C-f>"] = find_files_inside,
+                ["<C-g>"] = live_grep_inside,
             },
         })
 
