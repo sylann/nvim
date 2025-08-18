@@ -66,26 +66,27 @@ local function cd_with_history()
     end
 end
 
+local function get_entry_data()
+    local oilpath = vim.api.nvim_buf_get_name(0)
+    local oil_prefix = "oil://"
+    assert(oilpath:starts_with(oil_prefix), "Unexpected Oil path: " .. oilpath)
+
+    local abs_dir_path = string.sub(oilpath, #oil_prefix + 1)
+
+    local entry = require("oil").get_cursor_entry()
+    assert(entry, "Unexpected missing oil entry")
+
+    return abs_dir_path, entry
+end
+
 local function yank_entry_path(regname)
     return function()
-        local oilpath = vim.api.nvim_buf_get_name(0)
-        local oil_prefix = "oil://"
+        local dir_path, entry = get_entry_data()
+        local ws_path = vim.fn.getcwd() .. "/"
 
-        if not oilpath:starts_with(oil_prefix) then
-            vim.notify(string.format("Unexpected Oil path: %s", oilpath), vim.log.levels.ERROR)
-            return
-        end
+        if dir_path:starts_with(ws_path) then dir_path = string.sub(dir_path, #ws_path + 1) end
 
-        local ws_prefix = vim.fn.getcwd()
-
-        -- Try path relative to workspace, fallback to absolute path
-        local prefix = oil_prefix .. ws_prefix .. "/"
-        if not oilpath:starts_with(prefix) then prefix = oil_prefix end
-
-        -- Contruct path of entry
-        local dir_path = string.sub(oilpath, #prefix + 1)
-        local entry_name = require("oil").get_cursor_entry().name
-        local entry_path = dir_path .. entry_name
+        local entry_path = dir_path .. entry.name
 
         vim.notify(entry_path, vim.log.levels.INFO)
         vim.fn.setreg(regname, entry_path)
