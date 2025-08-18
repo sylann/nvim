@@ -148,3 +148,11 @@ function CleanFilename(filename)
     cached_clean[filename] = cleaned
     return cleaned
 end
+
+function GetVisualSelection()
+    local _, start_lnum, start_col = unpack(vim.fn.getpos('v'))
+    local _, end_lnum, end_col = unpack(vim.fn.getpos('.'))
+    local lines = vim.api.nvim_buf_get_text(0, start_lnum - 1, start_col - 1, end_lnum - 1, end_col, {})
+
+    return vim.fn.join(lines, '\n')
+end
