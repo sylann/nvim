@@ -25,6 +25,9 @@ vim.keymap.set("x", ">", ">gv", { desc = "Indent and reselect previous selection
 vim.keymap.set("n", "<C-K>", ":cprev<CR>zz", { desc = "Move to previous Quickfix" })
 vim.keymap.set("n", "<C-J>", ":cnext<CR>zz", { desc = "Move to next Quickfix" })
 
+vim.keymap.set("n", "<C-Left>", ":tabprevious<CR>", { desc = "Move to previous tab" })
+vim.keymap.set("n", "<C-Right>", ":tabnext<CR>", { desc = "Move to next Tab" })
+
 local function browse_at(host)
     return function() vim.ui.open(host .. vim.fn.expand("<cfile>")) end
 end
