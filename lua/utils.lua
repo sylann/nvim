@@ -150,8 +150,12 @@ function CleanFilename(filename)
 end
 
 function GetVisualSelection()
-    local _, start_lnum, start_col = unpack(vim.fn.getpos('v'))
-    local _, end_lnum, end_col = unpack(vim.fn.getpos('.'))
+    local _, other_lnum, other_col = unpack(vim.fn.getpos('v'))
+    local _, cursor_lnum, cursor_col = unpack(vim.fn.getpos('.'))
+    local start_lnum = vim.fn.min({other_lnum, cursor_lnum})
+    local end_lnum = vim.fn.max({other_lnum, cursor_lnum})
+    local start_col = vim.fn.min({other_col, cursor_col})
+    local end_col = vim.fn.max({other_col, cursor_col})
     local lines = vim.api.nvim_buf_get_text(0, start_lnum - 1, start_col - 1, end_lnum - 1, end_col, {})
 
     return vim.fn.join(lines, '\n')
