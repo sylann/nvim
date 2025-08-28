@@ -59,12 +59,12 @@ end
 ---The table is modified in place.
 ---@generic T
 ---@param tabl table<integer, T>
----@param must_be_removed fun(element: T): boolean
+---@param must_be_removed fun(element: T, index: integer): boolean
 ---@return integer n_removed
 table.splice = function(tabl, must_be_removed)
     local removed = 0
     for idx = 1, #tabl do
-        if must_be_removed(tabl[idx]) then
+        if must_be_removed(tabl[idx], idx) then
             removed = removed + 1
         else
             tabl[idx - removed] = tabl[idx]

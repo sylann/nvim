@@ -18,11 +18,11 @@ vim.api.nvim_create_autocmd({ "TextYankPost" }, {
 
 local del_qf_item = function()
     local items = vim.fn.getqflist()
-    local line = vim.fn.line(".")
-    table.remove(items, line)
+    local start_lnum, _, end_lnum, _ = GetVisualSelectionBoundary()
+    table.splice(items, function (_, idx) return idx >= start_lnum and idx <= end_lnum end)
     vim.fn.setqflist(items, "r")
     if #items == 0 then return end
-    if line > #items then line = #items end
+    local line = vim.fn.min({start_lnum, #items})
     vim.api.nvim_win_set_cursor(0, { line, 0 })
 end
 
