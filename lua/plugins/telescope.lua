@@ -135,7 +135,7 @@ return {
         map("n", "<leader>/", "Find in current buffer", Custom(builtin.current_buffer_fuzzy_find, dropdown, sortbyline))
         map("n", "<leader>fv", "Find word under cursor in current workspace", function() builtin.live_grep({ default_text = vim.fn.expand("<cword>") }) end)
         map("x", "<leader>fv", "Find visual selection in current workspace", function()
-            local selection = GetVisualSelection()
+            local selection = GetVisualSelectionLines()
             -- 1. escape special symbols that will be interpreted as regex operators (not what I want)
             -- 2. live_grep uses `nvim_buf_set_lines` internally and it crashes when the prompt contains a raw newline.
             local sanitized = vim.fn.escape(selection, "\\/(){}[]^$+*."):gsub("\n", "\\n")

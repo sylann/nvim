@@ -149,13 +149,22 @@ function CleanFilename(filename)
     return cleaned
 end
 
-function GetVisualSelection()
+---Get the boundary coordinates of the visual selection in terms of line and column numbers (1-based, included).
+---@return integer, integer, integer, integer -- start line, start column, end line, end column
+function GetVisualSelectionBoundary()
     local _, other_lnum, other_col = unpack(vim.fn.getpos('v'))
     local _, cursor_lnum, cursor_col = unpack(vim.fn.getpos('.'))
     local start_lnum = vim.fn.min({other_lnum, cursor_lnum})
     local end_lnum = vim.fn.max({other_lnum, cursor_lnum})
     local start_col = vim.fn.min({other_col, cursor_col})
     local end_col = vim.fn.max({other_col, cursor_col})
+    return start_lnum, start_col, end_lnum, end_col
+end
+
+---Get the text in the visual (line) selection
+---@return string
+function GetVisualSelectionLines()
+    local start_lnum, start_col, end_lnum, end_col = GetVisualSelectionBoundary()
     local lines = vim.api.nvim_buf_get_text(0, start_lnum - 1, start_col - 1, end_lnum - 1, end_col, {})
 
     return vim.fn.join(lines, '\n')
