@@ -114,6 +114,7 @@ return {
         map("n", "<leader><leader>", "Find Telescope builtins", Custom(builtin.builtin, { include_extensions = true }))
         map("n", "<leader>fr", "Resume last Telescope find results", builtin.resume)
         map("n", "<leader>hh", "Find Help", builtin.help_tags)
+        map("n", "<leader>hv", "Find Help for word under cursor", function() builtin.help_tags({ default_text = vim.fn.expand("<cword>") }) end)
         map("n", "<leader>bb", "Find buffers", builtin.buffers)
         map("n", "<leader>cc", "Find commands", builtin.commands)
         map("n", "<leader>km", "Find keymaps", builtin.keymaps)
