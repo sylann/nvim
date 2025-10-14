@@ -133,7 +133,7 @@ local static_paths = {
 local cached_clean = {}
 function CleanFilename(filename)
     local cached = cached_clean[filename]
-    print(string.format("CleanFilename: %s => %s", filename, cached))
+    -- print(string.format("CleanFilename: %s => %s", filename, cached))
     if cached then return cached end
     local cwd = vim.fn.getcwd() .. "/"
     local cleaned = string.gsub(filename, cwd, "", 1)
