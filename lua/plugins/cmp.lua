@@ -72,9 +72,9 @@ return {
             },
 
             sources = {
+                { name = "snippy" },
                 { name = "nvim_lsp" },
                 { name = "path" },
-                { name = "snippy" },
                 { name = "html-css" }, -- XXX: I would prefer adding this source from html_css.lua
             },
         })
