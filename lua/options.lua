@@ -24,6 +24,7 @@ vim.opt.signcolumn = "yes"
 vim.opt.wrap = false
 vim.opt.linebreak = true
 vim.opt.scrolloff = 5 -- Min visible lines above and under cursor
+vim.opt.sidescrolloff = 20
 -- vim.opt.lazyredraw = true      -- Improve scrolling a lot (no redraw during maccros)
 
 vim.opt_global.matchpairs:append("<:>")
