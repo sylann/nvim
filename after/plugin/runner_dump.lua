@@ -279,9 +279,10 @@ local function runner_restart()
     show_config()
 end
 
+vim.api.nvim_create_user_command("RunnerDump", runner_dump_right, {})
 vim.api.nvim_create_user_command("RunnerDumpRight", runner_dump_right, {})
 vim.api.nvim_create_user_command("RunnerDumpAbove", runner_dump_above, {})
 vim.api.nvim_create_user_command("RunnerDumpBelow", runner_dump_below, {})
-vim.api.nvim_create_user_command("RunnerDumpShowCfg", show_config, {})
-vim.api.nvim_create_user_command("RunnerDumpClear", runner_clear, {})
+vim.api.nvim_create_user_command("RunnerDumpConf", show_config, {})
+vim.api.nvim_create_user_command("RunnerDumpStop", runner_clear, {})
 vim.api.nvim_create_user_command("RunnerDumpRestart", runner_restart, {})
