@@ -302,6 +302,15 @@ function M.configure(theme, hl, link)
     hl("TelescopeMatching", _, ui.search, "bold")
     link("TelescopeBorder", "FloatBorder")
 
+    -- DapUI
+    hl("DapBreakpoint", ui.error, _)
+    hl("DapBreakpointCondition", ui.error_light, _)
+    hl("DapLogPoint", _, ui.error)
+    hl("DapStopped", _, ui.remove_dark)
+    hl("DapStoppedIcon", ui.error, ui.remove_dark)
+    hl("DapUIBreakpointsCurrentLine", _, ui.remove_dark)
+    hl("NvimDapVirtualText", ui.debug, ui.sel3)
+
     -- Syntax
     hl("Keyword", syn.keyword, _)
     hl("Operator", syn.keyword, _)
