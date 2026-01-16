@@ -14,4 +14,4 @@ set_virtual_lines(false)
 
 local map = Mapper({})
 
-map("n", "<leader>k", "Toggles virtual lines displaying LSP diagnostics", toggle_virtual_lines)
+map("n", "<leader>vl", "Toggles virtual lines displaying LSP diagnostics", toggle_virtual_lines)

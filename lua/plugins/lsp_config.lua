@@ -54,6 +54,7 @@ return {
 
                 -- See `:help vim.lsp.*` for documentation on any of the below functions
                 map("n", "K", "[LSP] Show symbol description on hover", vim.lsp.buf.hover)
+                map("n", "<leader>kk", "[LSP] Show diagnostics of line on hover", function () vim.diagnostic.open_float(0, { scope = "line" }) end)
                 map("i", "<C-x>", "[LSP] Show current function's signature", vim.lsp.buf.signature_help)
                 map("n", "gd", "[LSP] Go to definition", custom_lsp_definitions)
                 map("n", "gD", "[LSP] Go to declaration", vim.lsp.buf.declaration)

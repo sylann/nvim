@@ -2,7 +2,7 @@ vim.g.mapleader = " "
 
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit Terminal mode and go back to normal mode in a terminal buffer" })
 
-vim.keymap.set("n", "<leader>kk", ":Inspect<CR>", { desc = "Inspect symbol under cursor (AST / LSP)" })
+vim.keymap.set("n", "<leader>ki", ":Inspect<CR>", { desc = "Inspect symbol under cursor (AST / LSP)" })
 
 vim.keymap.set("n", "<Esc>", ":nohlsearch<CR>", { desc = "Reset hlsearch" })
 vim.keymap.set("s", "<BS>", "><BS>", { desc = "fishy: delete selection and stay in insert mode" })
