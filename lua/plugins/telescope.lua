@@ -59,7 +59,7 @@ return {
                         "!Cargo.lock",
                         "!go.sum",
                     },
-                    additional_args = { "--hidden", "--multiline" },
+                    additional_args = { "--hidden", "--multiline", "--sort", "path" },
                     -- TODO: investigate telescope bug with smart-case search:
                     -- it works but when a line contains a searched word in several case variations,
                     -- it is always the first insensitive match that gets highlighted, which can be confusing.
