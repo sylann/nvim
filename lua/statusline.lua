@@ -1,4 +1,4 @@
-local _, devicons = pcall(require, "nvim-web-devicons")
+local has_devicons, devicons = pcall(require, "nvim-web-devicons")
 
 ---@class SlOptions
 ---@field hl? string name of a highlight group
@@ -232,7 +232,7 @@ end
 local function sl_filetype()
     local items = {} ---@type SlItem[]
     local ft = vim.bo.filetype
-    if devicons then
+    if has_devicons then
         local icon, iconhl = devicons.get_icon_by_filetype(ft)
         if icon then table.insert(items, { text = icon, hl = iconhl, pr = " " }) end
     end

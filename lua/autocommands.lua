@@ -36,8 +36,8 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     pattern = "*/lua/plugins/*.lua",
     callback = function(args)
-        local _, plugin = pcall(dofile, args.file)
-        if plugin and plugin.enabled ~= false then
+        local has_plugin, plugin = pcall(dofile, args.file)
+        if has_plugin and plugin.enabled ~= false then
             if type(plugin.config) == "function" then plugin.config(nil, plugin.opts) end
         end
     end,
