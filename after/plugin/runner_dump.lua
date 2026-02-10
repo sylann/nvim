@@ -267,6 +267,13 @@ local function runner_dump_above() init_config() show_dump_windows("above") show
 local function runner_dump_below() init_config() show_dump_windows("below") show_config() end
 -- stylua: ignore end
 
+local function debug_state()
+    print("m_cfg:", vim.inspect(m_cfg, { newline = '', depth = 1 }))
+    print("m_cfg_before_update:", vim.inspect(m_cfg_before_update, { newline = '', depth = 1 }))
+    print("m_buffers:", vim.inspect(m_buffers, { newline = '', depth = 1 }))
+    print("m_autocmds:", vim.inspect(m_autocmds, { newline = '', depth = 1 }))
+end
+
 local function runner_clear()
     autocmd_clear_all()
     buf_delete_all()
@@ -285,5 +292,6 @@ vim.api.nvim_create_user_command("RunnerDumpRight", runner_dump_right, {})
 vim.api.nvim_create_user_command("RunnerDumpAbove", runner_dump_above, {})
 vim.api.nvim_create_user_command("RunnerDumpBelow", runner_dump_below, {})
 vim.api.nvim_create_user_command("RunnerDumpConf", show_config, {})
+vim.api.nvim_create_user_command("RunnerDumpDebugState", debug_state, {})
 vim.api.nvim_create_user_command("RunnerDumpStop", runner_clear, {})
 vim.api.nvim_create_user_command("RunnerDumpRestart", runner_restart, {})
