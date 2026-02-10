@@ -4,6 +4,14 @@ vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit Terminal mode and go 
 
 vim.keymap.set("n", "<leader>ki", ":Inspect<CR>", { desc = "Inspect symbol under cursor (AST / LSP)" })
 
+vim.keymap.set("n", "µ", function()
+    if vim.o.filetype ~= "netrw" then
+        local ok, _ = pcall(vim.cmd, "Rex")
+        if ok then return end
+    end
+    vim.cmd("Ex")
+end, { desc = "Open parent directory, use :Rexplore if appropriate" })
+
 vim.keymap.set("n", "<Esc>", ":nohlsearch<CR>", { desc = "Reset hlsearch" })
 vim.keymap.set("s", "<BS>", "><BS>", { desc = "fishy: delete selection and stay in insert mode" })
 
