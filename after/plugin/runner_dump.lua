@@ -1,6 +1,5 @@
 local group = vim.api.nvim_create_augroup("RunnerDump", { clear = true })
 
--- FIXME: why does it crash when restarting after a clear
 -- TODO: move the logic of RunnerDump in a dedicated file (extract some reusable logic elsewhere?)
 -- TODO: clear everything on closing the dump buffer (rollback)
 -- TODO: adjust name of commands so they're easier to type quickly
@@ -107,6 +106,7 @@ local function buf_delete_all()
     for _, buf in pairs(m_buffers) do
         if buf then vim.api.nvim_buf_delete(buf, { force = true }) end
     end
+    m_buffers = {}
 end
 
 --- Autocmds
@@ -126,6 +126,7 @@ local function autocmd_clear_all()
     for _, id in pairs(m_autocmds) do
         vim.api.nvim_del_autocmd(id)
     end
+    m_autocmds = {}
 end
 
 local function autocmd_on_pattern(event, pattern, callback)
@@ -137,7 +138,7 @@ end
 local function autocmd_on_buffer(event, buffer, callback)
     local key = event .. "__" .. buffer
     autocmd_clear(key)
-    vim.api.nvim_create_autocmd(event, { group = group, buffer = buffer, callback = callback })
+    m_autocmds[key] = vim.api.nvim_create_autocmd(event, { group = group, buffer = buffer, callback = callback })
 end
 
 --- Config
