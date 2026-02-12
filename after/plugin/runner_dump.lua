@@ -91,14 +91,14 @@ local function buf_create_scratch(name, filetype)
         buf = vim.api.nvim_create_buf(false, true)
         vim.api.nvim_buf_set_name(buf, "RunnerDump://" .. name)
         vim.api.nvim_set_option_value("filetype", filetype, { buf = buf })
-        vim.api.nvim_create_autocmd("BufDelete", {
+        vim.api.nvim_create_autocmd("BufWipeout", {
             group = group,
             buffer = buf,
             once = true,
             callback = function() m_buffers[name] = nil end,
         })
+        m_buffers[name] = buf
     end
-    m_buffers[name] = buf
     return buf -- useful for where this is called, to not have to check for nil
 end
 
