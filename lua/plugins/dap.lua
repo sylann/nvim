@@ -112,6 +112,20 @@ return {
         dap.listeners.before.event_terminated["dapui_config"] = dapui.close
         dap.listeners.before.event_exited["dapui_config"] = dapui.close
 
+        dap.configurations.lua = {
+            {
+                name = 'Current file (local-lua-dbg, lua)',
+                type = 'local-lua',
+                request = 'launch',
+                cwd = '${workspaceFolder}',
+                program = {
+                    lua = 'lua5.1',
+                    file = '${file}',
+                },
+                args = {},
+            },
+        }
+
         -- TODO: add this command in a dedicated setup
         -- require('dap-go').debug_test()
         require("dap-go").setup({
