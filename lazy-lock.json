@@ -37,7 +37,7 @@
   "render-markdown.nvim": { "branch": "main", "commit": "786d643ac7a691515d401930b8850f596992725d" },
   "rustaceanvim": { "branch": "master", "commit": "66398662c07d265b226897500ed50eafba3dffb4" },
   "telescope-fzf-native.nvim": { "branch": "main", "commit": "1f08ed60cafc8f6168b72b80be2b2ea149813e55" },
-  "telescope-git-file-history.nvim": { "branch": "master", "commit": "e7d495319f2a04df96402057a6992ea970f8914d" },
+  "telescope-git-file-history.nvim": { "branch": "master", "commit": "2b87e8962ceb3b9a516fd2f6d72d089a2d27a6ee" },
   "telescope-symbols.nvim": { "branch": "master", "commit": "a6d0127a53d39b9fc2af75bd169d288166118aec" },
   "telescope-ui-select.nvim": { "branch": "master", "commit": "6e51d7da30bd139a6950adf2a47fda6df9fa06d2" },
   "telescope.nvim": { "branch": "0.1.x", "commit": "a0bbec21143c7bc5f8bb02e0005fa0b982edc026" },
