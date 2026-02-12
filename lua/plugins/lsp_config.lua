@@ -6,6 +6,12 @@
 -- The server name is specific because we want to reuse the predefined configurations but it is otherwise insignificant.
 -- Use `:help lspconfig-all` to search these ids.
 
+local function use_plugin_capabilities_if_available(plugin_name)
+    local ok, mod = pcall(require, plugin_name)
+    if not ok then return {} end
+    return mod.default_capabilities()
+end
+
 return {
     "neovim/nvim-lspconfig",
 
@@ -14,7 +20,7 @@ return {
             "force",
             vim.lsp.protocol.make_client_capabilities(),
             -- INFO: Add LSP extensions below
-            require("cmp_nvim_lsp").default_capabilities()
+            use_plugin_capabilities_if_available("cmp_nvim_lsp")
         )
         vim.lsp.config("*", global_capabilities)
 
