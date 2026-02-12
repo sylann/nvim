@@ -14,7 +14,6 @@ return {
     config = function()
         local cmp = require("cmp")
         local icon_by_kind = require("icons").icon_by_symbol_kind
-        local snippy = require("snippy")
 
         ---offset: Entries prefixed with "_" will be ranked lower, and "__" even lower.
         ---Symbols prefixed with "_" are considered private by convention in many languages.
@@ -32,7 +31,7 @@ return {
 
         cmp.setup({
             snippet = {
-                expand = function(args) snippy.expand_snippet(args.body) end,
+                expand = function(args) require("snippy").expand_snippet(args.body) end,
             },
             formatting = {
                 fields = { "abbr", "kind", "menu" },
@@ -71,12 +70,12 @@ return {
                 },
             },
 
-            sources = {
+            sources = cmp.config.sources({
                 { name = "snippy" },
                 { name = "nvim_lsp" },
                 { name = "path" },
                 { name = "html-css" }, -- XXX: I would prefer adding this source from html_css.lua
-            },
+            }),
         })
     end,
 }
